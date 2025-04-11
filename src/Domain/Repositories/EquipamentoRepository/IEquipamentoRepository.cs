@@ -4,9 +4,9 @@ namespace Domain.Repositories.EquipamentoRepository;
 
 public interface IEquipamentoRepository
 {
-    Task<Equipamento> ObterPorIdAsync(Guid id);
+    Task<Equipamento?> ObterPorIdAsync(Guid id);
     Task<IEnumerable<Equipamento>> ListarTodosAsync();
-    Task AdicionarAsync(Equipamento equipamento);
+    Task AdicionarEquipamentoAsync(Equipamento equipamento);
     Task AtualizarAsync(Equipamento equipamento);
-    Task RemoverAsync(Guid id);
+    Task RemoverAsync(Equipamento equipamento);
 }

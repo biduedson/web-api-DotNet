@@ -1,7 +1,6 @@
 // Importa os DTOs (Data Transfer Objects) usados para entrada e saída de dados da API
 using Application.DTOs;
 using Application.DTOs.Requests;
-using Application.DTOs.Responses;
 
 // Importa o caso de uso responsável por criar equipamentos
 using Application.UseCases.CriarEquipamento;
@@ -32,7 +31,7 @@ namespace API.Controllers
         //
         // Isso ajuda ferramentas como Swagger a gerar uma documentação mais precisa
         // e também melhora a legibilidade da API para desenvolvedores
-        [ProducesResponseType(typeof(EquipamentoRegistradoResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(RespostaDeSucessoDaApi<Object>), StatusCodes.Status201Created)]
 
         // Esse método é assíncrono e recebe dois parâmetros:
         // - [FromServices] injeta automaticamente o caso de uso (use case) da criação de equipamento

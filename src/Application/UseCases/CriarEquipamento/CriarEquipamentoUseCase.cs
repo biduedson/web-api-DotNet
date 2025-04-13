@@ -1,7 +1,6 @@
 // Importações necessárias
 using Application.DTOs;
 using Application.DTOs.Requests; // DTO de entrada (request)
-using Application.DTOs.Responses; // DTO de saída (response)
 using AutoMapper; // Biblioteca AutoMapper para mapear objetos
 using Domain.Entities; // Entidade de domínio Equipamento
 using Domain.Repositories.EquipamentoRepository; // Interface do repositório
@@ -28,7 +27,7 @@ public class CriarEquipamentoUseCase : ICriarEquipamentoUseCase
     }
 
     // Método principal da classe: Executa o caso de uso de criação de um equipamento
-    public async Task<EquipamentoRegistradoResponse> Execute(RegistraEquipamentoRequest request)
+    public async Task<RespostaDeSucessoDaApi<Object>> Execute(RegistraEquipamentoRequest request)
     {
         // Usa o AutoMapper para converter o DTO de request para a entidade Equipamento
         var equipamento = _mapper.Map<Equipamento>(request);
@@ -37,9 +36,11 @@ public class CriarEquipamentoUseCase : ICriarEquipamentoUseCase
         await _repository.AdicionarEquipamentoAsync(equipamento);
 
         // Retorna um DTO de resposta indicando que o equipamento foi registrado
-        return new EquipamentoRegistradoResponse
+        return new RespostaDeSucessoDaApi<Object>
         {
-            Nome = request.Nome
+            Succes = true,
+            Message = "Equipamento cadastrado com sucesso",
+            Data = new{Nome = request.Nome}
         };
     }
 }

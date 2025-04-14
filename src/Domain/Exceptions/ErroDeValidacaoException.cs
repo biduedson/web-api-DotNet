@@ -1,6 +1,6 @@
 namespace Domain.Exceptions;
 
-public class ErroDeValidacaoException : Exception
+public class ErroDeValidacaoException : DomainException
 {
     public IList<string> MenssagensDeErro {get; set;}
 

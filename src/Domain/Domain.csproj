@@ -5,5 +5,34 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  <ItemGroup>
+    <!-- Configuração para MensagensDeExceptionUsuario -->
+    <Compile Update="MensagensDeExceptionUsuario.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Recursos/Usuario/MensagensDeExceptionUsuario.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Recursos/Usuario/MensagensDeExceptionUsuario.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MensagensDeExceptionUsuario.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+    <!-- Configuração para MensagensDeExceptionEquipamento -->
+  <ItemGroup>
+    <Compile Update="MensagensDeExceptionEquipamento.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Recursos/Equipamento/MensagensDeExceptionEquipamento.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Recursos/Equipamento/MensagensDeExceptionEquipamento.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MensagensDeExceptionEquipamento.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 
 </Project>

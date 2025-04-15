@@ -15,7 +15,6 @@ builder.Services.AdicionarInfrastructure(builder.Configuration);
 builder.Services.AddMvc(options => options.Filters.Add(typeof(FiltroDeException)));
 
 
-builder.Services.AddScoped<IEquipamentoRepository, EquipamentoRepository>();
 
 
 var app = builder.Build();

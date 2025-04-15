@@ -6,7 +6,7 @@ using FluentValidation;
 
 namespace Application.UseCases.CriarEquipamento.Validadores
 {
-    // Classe que herda de AbstractValidator para criar as regras de validação para o registro de usuário
+    // Classe que herda de AbstractValidator para criar as regras de validação para o registro de equipamento
     public class ValidadorDeCriacaoDeEquipamento : AbstractValidator<RegistraEquipamentoRequest>
     {
         public ValidadorDeCriacaoDeEquipamento()

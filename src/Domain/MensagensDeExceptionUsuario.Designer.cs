@@ -65,6 +65,18 @@ namespace Domain
         }
 
         /// <summary>
+        /// Retorna a mensagem: "Este e-mail ja esta sendo usado."
+        /// </summary>
+        public static string EMAIL_JA_USADO
+        {
+            get
+            {
+                return ResourceManager.GetString("EMAIL_JA_USADO");
+            }
+        }
+
+
+        /// <summary>
         /// Retorna a mensagem: "A senha é obrigatória."
         /// </summary>
         public static string SENHA_OBRIGATORIO
@@ -72,6 +84,17 @@ namespace Domain
             get
             {
                 return ResourceManager.GetString("SENHA_OBRIGATORIO");
+            }
+        }
+
+        /// <summary>
+        /// Retorna a mensagem: "A senha precisa ter pelo menos 6 caracteres;"
+        /// </summary>
+        public static string SENHA_INVALIDA
+        {
+            get
+            {
+                return ResourceManager.GetString("SENHA_INVALIDA");
             }
         }
     }

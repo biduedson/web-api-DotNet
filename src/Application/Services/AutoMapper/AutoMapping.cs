@@ -16,5 +16,6 @@ public class AutoMapping : Profile
         // Aqui fazemos o mapeamento de RegistraEquipamentoRequest para Equipamento
         // Isso diz ao AutoMapper como transformar um DTO de request em uma entidade
         CreateMap<RegistraEquipamentoRequest, Equipamento>();
+        CreateMap<RegistrarUsuarioRequest, Usuario>();
     }
 }

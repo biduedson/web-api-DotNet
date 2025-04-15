@@ -1,8 +1,9 @@
 // Importações necessárias para o uso do AutoMapper, configuração e injeção de dependência
 using Application.UseCases.CriarEquipamento;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using AutoMapper;
+using Microsoft.Extensions.Configuration;
+using Application.UseCases.CriarUsuario;
+using Application.criptografia;
 
 namespace Application
 {
@@ -16,12 +17,13 @@ namespace Application
         //
         // IServiceCollection services → é a lista de todos os serviços que sua aplicação conhece.
         // IConfiguration configuration → representa o arquivo appsettings.json, variáveis de ambiente e outras configs.
-        
-        //✅ O que é AddAutoMapper(typeof(...).Assembly)?
-        //É um atalho que diz ao AutoMapper para procurar automaticamente todos os mapeamentos dentro de um assembly.
-        //Toda classe que herda de Profile será registrada sem você precisar fazer manualmente.
+
         public static void AdicionarApplication(this IServiceCollection services, IConfiguration configuration)
         {
+
+            // Adiciona o serviço de criptografia de senha.
+            AdicionarCriptografiaDesenha(services,configuration);
+
             // Registra os perfis do AutoMapper da camada Application
             AdicionarAutoMapper(services);
 
@@ -40,22 +42,37 @@ namespace Application
             services.AddAutoMapper(typeof(InjecaoDeDependencia).Assembly);
         }
 
+        // Método privado para adicionar o serviço de criptografia de senha no contêiner de dependência.
+        // A chave adicional de criptografia é obtida da configuração da aplicação.
+
+        private static void AdicionarCriptografiaDesenha(IServiceCollection services, IConfiguration configuration)
+        {
+            // Obtém a chave adicional de criptografia das configurações.
+            var AdditionalKey = configuration.GetValue<string>("Settings:Passwords:AdditionalKey");
+            services.AddScoped(option => new CriptografiaDeSenha(AdditionalKey!));
+        }
+
         // Aqui registramos os casos de uso (use cases), que são as regras de negócio da aplicação.
         // Cada use case é uma classe que executa uma ação específica (ex: criar, listar, atualizar...).
         private static void AdicionarUseCases(IServiceCollection services)
         {
-            // O método AddScoped registra o serviço com tempo de vida 'scoped':
-            // → A mesma instância será usada durante a requisição HTTP atual,
-            // → mas uma nova instância será criada a cada nova requisição.
-            //
-            // Aqui estamos dizendo que toda vez que alguém pedir ICriarEquipamentoUseCase,
-            // o sistema deve injetar uma instância de CriarEquipamentoUseCase.
+           // ✅ O que significa AddScoped?
+           // - Significa que a instância da classe será criada **uma única vez por requisição HTTP**.
+           // - Durante uma mesma requisição, todos os lugares que solicitarem esse serviço (via construtor, por exemplo)
+           //   receberão **a mesma instância**.
+           // - Mas em uma nova requisição, será criada **uma nova instância**.
+           //
+           // Esse comportamento é ideal para serviços que usam DbContext, por exemplo, onde você quer manter
+           // a mesma conexão/transação durante a requisição toda.
 
+           // Exemplo: Se um controller usa ICriarUsuarioUseCase, e esse use case usa IUsuarioRepository,
+           // ambos compartilharão a mesma instância durante aquela requisição.
+            
             services.AddScoped<ICriarEquipamentoUseCase, CriarEquipamentoUseCase>();
-
-            // Exemplo para quando você tiver mais casos de uso:
+            services.AddScoped<ICriarUsuarioUseCase, CriarUsuarioUseCase>();
+            // Adicione outros casos de uso aqui conforme necessário:
             // services.AddScoped<IAtualizarEquipamentoUseCase, AtualizarEquipamentoUseCase>();
-            // services.AddScoped<IDeletarEquipamentoUseCase, DeletarEquipamentoUseCase>();
+            // services.AddScoped<IDeletarUsuarioUseCase, DeletarUsuarioUseCase>();
         }
     }
 }

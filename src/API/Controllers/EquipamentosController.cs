@@ -26,7 +26,7 @@ namespace API.Controllers
         // - Um objeto do tipo EquipamentoRegistradoResponse no corpo da resposta
         // - E que o status HTTP da resposta será 201 (Created)
         //
-        // typeof(EquipamentoRegistradoResponse) apenas indica o tipo da classe retornada,
+        // typeof(RespostaDeSucessoDaApi<Object>) apenas indica o tipo da classe retornada,
         // sem criar uma instância — é usado apenas para documentação e análise estática
         //
         // Isso ajuda ferramentas como Swagger a gerar uma documentação mais precisa

@@ -129,4 +129,12 @@
     <value>A senha é obrigatória.</value>
     <comment/>
   </data>
+  <data name="SENHA_INVALIDA" xml:space="preserve">
+    <value>A senha precisa ter pelo menos 6 caracteres;</value>
+    <comment/>
+  </data>
+  <data name="EMAIL_JA_USADO" xml:space="preserve">
+    <value>Este e-mail ja esta sendo usado.</value>
+    <comment/>
+  </data>
 </root>

@@ -1,5 +1,9 @@
 // Importa o contexto do banco de dados (AppDbContext), que representa as entidades e as tabelas do banco
+using Domain.Repositories.EquipamentoRepository;
+using Domain.Repositories.UsuarioRepository;
 using Infrastructure.Data.Context;
+using Infrastructure.Data.Repositories;
+
 
 // Importa os recursos do Entity Framework Core necessários para configurar o banco de dados
 using Microsoft.EntityFrameworkCore;
@@ -59,6 +63,20 @@ namespace Infrastructure
                 // Configura o AppDbContext para usar o MySQL com a string de conexão e a versão do servidor
                 dbContextOptions.UseMySql(connectionString, serverVersion);
             });
+           // Aqui registramos os repositórios na injeção de dependência:
+           // ✅ O que significa AddScoped?
+           // - Significa que a instância da classe será criada **uma única vez por requisição HTTP**.
+           // - Durante uma mesma requisição, todos os lugares que solicitarem esse serviço (via construtor, por exemplo)
+           //   receberão **a mesma instância**.
+           // - Mas em uma nova requisição, será criada **uma nova instância**.
+           //
+           // Esse comportamento é ideal para serviços que usam DbContext, por exemplo, onde você quer manter
+           // a mesma conexão/transação durante a requisição toda.
+
+           // Exemplo: Se um controller usa ICriarUsuarioUseCase, e esse use case usa IUsuarioRepository,
+           // ambos compartilharão a mesma instância durante aquela requisição.
+             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+             services.AddScoped<IEquipamentoRepository, EquipamentoRepository>();
         }
     }
 }

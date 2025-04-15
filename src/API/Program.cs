@@ -1,11 +1,13 @@
-using Domain.Repositories.EquipamentoRepository;
-using Infrastructure;
-using Infrastructure.Data.Repositories;
+  
+using DotNetEnv;
 using Application;
 using API.Filtros;
+using Infrastructure;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
+Env.Load();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

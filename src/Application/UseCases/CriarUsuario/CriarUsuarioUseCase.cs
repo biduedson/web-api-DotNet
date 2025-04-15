@@ -3,6 +3,7 @@
 using System.Security.Cryptography.X509Certificates;
 using Application.criptografia;
 using Application.DTOs.Requests;
+using Application.Services.Token;
 using Application.UseCases.CriarUsuario.Validadores;
 using AutoMapper;
 using Domain;
@@ -19,20 +20,24 @@ namespace Application.UseCases.CriarUsuario
         private readonly IUsuarioRepository _repository;
 
          // Instância do AutoMapper que será usada para transformar DTOs em entidades
-         public IMapper _mapper;
+        public IMapper _mapper;
 
           // Serviço de criptografia para proteger senhas.
-          private readonly CriptografiaDeSenha _criptografiaDeSenha;
+        private readonly CriptografiaDeSenha _criptografiaDeSenha;
 
          // Construtor da classe, recebe via injeção de dependência:
          // - o repositório que lida com persistência
          // - o mapper que converte DTOs em entidades
-
-        public CriarUsuarioUseCase(IUsuarioRepository repository, IMapper mapper, CriptografiaDeSenha criptografiaDeSenha)
+        
+        // Serviço de manipulacao de tokens.
+        private readonly IServicoDeToken _servicoDetoken;
+        
+        public CriarUsuarioUseCase(IUsuarioRepository repository, IMapper mapper, CriptografiaDeSenha criptografiaDeSenha, IServicoDeToken servicoDetoken)
         {
             _repository = repository;
             _mapper = mapper;
             _criptografiaDeSenha = criptografiaDeSenha;
+            _servicoDetoken = servicoDetoken;
 
         }
 

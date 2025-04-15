@@ -1,8 +1,12 @@
 // Importa o contexto do banco de dados (AppDbContext), que representa as entidades e as tabelas do banco
+using Application.Services.Token;
 using Domain.Repositories.EquipamentoRepository;
 using Domain.Repositories.UsuarioRepository;
 using Infrastructure.Data.Context;
 using Infrastructure.Data.Repositories;
+using Infrastructure.Services.Auth;
+
+
 
 
 // Importa os recursos do Entity Framework Core necessários para configurar o banco de dados
@@ -63,6 +67,9 @@ namespace Infrastructure
                 // Configura o AppDbContext para usar o MySQL com a string de conexão e a versão do servidor
                 dbContextOptions.UseMySql(connectionString, serverVersion);
             });
+           // Bind do bloco "Jwt" para configuracoesJwt
+           var jwtSection = configuration.GetSection("Jwt");
+           services.Configure<ConfiguracaoJwt>(jwtSection);
            // Aqui registramos os repositórios na injeção de dependência:
            // ✅ O que significa AddScoped?
            // - Significa que a instância da classe será criada **uma única vez por requisição HTTP**.
@@ -77,6 +84,9 @@ namespace Infrastructure
            // ambos compartilharão a mesma instância durante aquela requisição.
              services.AddScoped<IUsuarioRepository, UsuarioRepository>();
              services.AddScoped<IEquipamentoRepository, EquipamentoRepository>();
+
+             // Registro do serviço de token com IOptions
+             services.AddSingleton<IServicoDeToken, ServicoDeToken>();
         }
     }
 }

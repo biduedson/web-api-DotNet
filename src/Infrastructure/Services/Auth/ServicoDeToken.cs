@@ -3,18 +3,19 @@ using System.Security.Claims; // Biblioteca que define "Claims" (informações s
 using System.Text; // Usada para manipulação de strings e codificação.
 using Application.Services.Token; // Serviço de tokens definido na aplicação.
 using Microsoft.Extensions.Configuration; // Para acessar as configurações do aplicativo (appsettings).
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens; // Biblioteca para trabalhar com autenticação de tokens.
 
 namespace Infrastructure.Services.Auth; // Define o namespace para a infraestrutura de autenticação.
 
 public class ServicoDeToken : IServicoDeToken
 {
-    private readonly IConfiguration _config; // Armazena a configuração do aplicativo, como a chave do JWT.
+    private readonly ConfiguracaoJwt _config; // Armazena a configuração do aplicativo, como a chave do JWT.
 
     // Construtor que injeta as configurações do app.
-    public ServicoDeToken(IConfiguration config)
+    public ServicoDeToken(IOptions<ConfiguracaoJwt> config)
     {
-        _config = config; // Inicializa a configuração com os dados do appsettings.json.
+        _config = config.Value; // Inicializa a configuração com os dados do appsettings.json.
     }
 
     /// <summary>
@@ -40,17 +41,17 @@ public class ServicoDeToken : IServicoDeToken
         };
 
         // Criando a chave simétrica para assinar o token. A chave vem das configurações do app.
-        var chave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
+        var chave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.Key));
 
         // Definindo as credenciais de assinatura do token, usando o algoritmo HMACSHA256.
         var credenciais = new SigningCredentials(chave, SecurityAlgorithms.HmacSha256);
 
         // Criando o token JWT com as informações definidas (claims, expiração, assinatura).
         var token = new JwtSecurityToken(
-            issuer: _config["Jwt:Issuer"], // O emissor do token (geralmente o domínio da aplicação).
-            audience: _config["Jwt:audience"], // A audiência do token, que define quem pode aceitar esse token.
+            issuer: _config.Issuer, // O emissor do token (geralmente o domínio da aplicação).
+            audience: _config.Audience, // A audiência do token, que define quem pode aceitar esse token.
             claims: claims, // Informações sobre o usuário (os "claims").
-            expires: DateTime.UtcNow.AddHours(1), // O token expirará em 1 hora.
+            expires: DateTime.UtcNow.AddHours(_config.ExpiresInHours), // O token expirará em 1 hora.
             signingCredentials: credenciais // As credenciais para assinar o token.
         );
 
@@ -68,7 +69,7 @@ public class ServicoDeToken : IServicoDeToken
         var tokenHandler = new JwtSecurityTokenHandler(); // Criando o manipulador para processar o token.
         
         // Recuperando a chave usada para assinar o token (do arquivo de configuração).
-        var chave = Encoding.UTF8.GetBytes(_config["Jwt:Key"]!);
+        var chave = Encoding.UTF8.GetBytes(_config.Key);
 
         try
         {
@@ -77,7 +78,7 @@ public class ServicoDeToken : IServicoDeToken
             {
                 ValidateIssuer = true, // Valida o emissor do token para garantir que é de uma fonte confiável.
                 ValidateAudience = true, // Valida a audiência do token (quem deve aceitar esse token).
-                ValidAudience = _config["Jwt:Issuer"], // A audiência válida é a mesma configurada no appsettings.
+                ValidAudience = _config.Issuer, // A audiência válida é a mesma configurada no appsettings.
                 IssuerSigningKey = new SymmetricSecurityKey(chave), // A chave usada para validar a assinatura do token.
                 ValidateLifetime = true, // Verifica se o token não expirou.
                 ClockSkew = TimeSpan.Zero // Ajuste de tempo para verificação de expiração (sem margem de erro).

@@ -35,4 +35,19 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <!-- Configuração para MensagensDeExceptionEAutenticacao -->
+  <ItemGroup>
+    <Compile Update="MensagensDeExceptionAutenticacao.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Recursos/Autenticacao/MensagensDeExceptionAutenticacao.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Recursos/Autenticacao/MensagensDeExceptionAutenticacao.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MensagensDeExceptionAutenticacao.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

@@ -21,12 +21,20 @@ namespace Infrastructure.Data.Repositories
         // Construtor que recebe o contexto e armazena em um campo privado
         public UsuarioRepository(AppDbContext context) => _context = context;
        
-        // Método que busca um equipamento específico por seu ID
+        // Método que busca um Usuario específico por seu ID
         public async Task<Usuario?> ObterPorIdAsync(Guid id)
         {
           // Usa LINQ para buscar o primeiro usuario com o ID fornecido
           // Pode retornar null se não encontrar
           return await _context.Usuarios.FirstOrDefaultAsync(usuario => usuario.Id == id);
+        }
+
+        // Método que busca um Usuarioo específico por seu e-mail
+        public async Task<Usuario?> ObterPorEmail(string email)
+        {
+          // Usa LINQ para buscar o primeiro usuario com o e-mail fornecido
+          // Pode retornar null se não encontrar
+          return await _context.Usuarios.FirstOrDefaultAsync(usuario => usuario.Email == email);
         }
 
         // Método que retorna todos os equipamentos cadastrados no banco

@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Application.UseCases.CriarUsuario;
 using Application.criptografia;
+using Application.UseCases.autenticacao;
+using Application.UseCases.Autenticacao;
 
 namespace Application
 {
@@ -70,6 +72,7 @@ namespace Application
             
             services.AddScoped<ICriarEquipamentoUseCase, CriarEquipamentoUseCase>();
             services.AddScoped<ICriarUsuarioUseCase, CriarUsuarioUseCase>();
+            services.AddScoped<IAutenticacaoUseCase, AutenticacaoUseCase>();
             // Adicione outros casos de uso aqui conforme necessário:
             // services.AddScoped<IAtualizarEquipamentoUseCase, AtualizarEquipamentoUseCase>();
             // services.AddScoped<IDeletarUsuarioUseCase, DeletarUsuarioUseCase>();

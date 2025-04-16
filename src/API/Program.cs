@@ -9,6 +9,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 Env.Load();
 
+// Carrega variáveis de ambiente e configurações de arquivos (appsettings.json)
+builder.Configuration.AddEnvironmentVariables();
+
+// Adiciona o arquivo appsettings.json (se necessário)
+builder.Configuration.AddJsonFile("appsettings.Development", optional: true, reloadOnChange: true);
+
+
+
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

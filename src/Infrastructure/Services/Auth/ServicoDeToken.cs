@@ -15,7 +15,7 @@ public class ServicoDeToken : IServicoDeToken
     // Construtor que injeta as configurações do app.
     public ServicoDeToken(IOptions<ConfiguracaoJwt> config)
     {
-        _config = config.Value; // Inicializa a configuração com os dados do appsettings.json.
+        _config = config.Value; // Inicializa a configuração com os dados do appsettings.json ou variáveis de ambiente.
     }
 
     /// <summary>
@@ -28,7 +28,7 @@ public class ServicoDeToken : IServicoDeToken
     public string GerarToken(Guid idUsuario, string email, bool administrador)
     {
         // Definindo os "claims" (declarações) do token. Claims são informações sobre o usuário.
-        var claims = new[]
+        var claims = new[] 
         {
             // Claim "sub" (Subject): Identificador único do usuário (ID).
             new Claim(JwtRegisteredClaimNames.Sub, idUsuario.ToString()),
@@ -68,7 +68,7 @@ public class ServicoDeToken : IServicoDeToken
     {
         var tokenHandler = new JwtSecurityTokenHandler(); // Criando o manipulador para processar o token.
         
-        // Recuperando a chave usada para assinar o token (do arquivo de configuração).
+        // Recuperando a chave usada para assinar o token (do arquivo de configuração ou variáveis de ambiente).
         var chave = Encoding.UTF8.GetBytes(_config.Key);
 
         try
@@ -78,7 +78,7 @@ public class ServicoDeToken : IServicoDeToken
             {
                 ValidateIssuer = true, // Valida o emissor do token para garantir que é de uma fonte confiável.
                 ValidateAudience = true, // Valida a audiência do token (quem deve aceitar esse token).
-                ValidAudience = _config.Issuer, // A audiência válida é a mesma configurada no appsettings.
+                ValidAudience = _config.Issuer, // A audiência válida é a mesma configurada no appsettings ou variável de ambiente.
                 IssuerSigningKey = new SymmetricSecurityKey(chave), // A chave usada para validar a assinatura do token.
                 ValidateLifetime = true, // Verifica se o token não expirou.
                 ClockSkew = TimeSpan.Zero // Ajuste de tempo para verificação de expiração (sem margem de erro).
@@ -114,5 +114,13 @@ public class ServicoDeToken : IServicoDeToken
         }
 
         return null; // Caso contrário, retorna null (token inválido ou sem ID).
+    }
+
+    public DateTime ObterDataExpiracaoToken(string token)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var jwtToken = handler.ReadJwtToken(token);
+
+        return jwtToken.ValidTo; // Retorna a data de expiração do token.
     }
 }

@@ -47,7 +47,7 @@ namespace API.Filtros
     context.HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
     // Retorna um objeto de erro com uma mensagem genérica de erro desconhecido.
-    context.Result = new ObjectResult(new RespostasDeErro("Erro desconhecido."));
+    context.Result = new ObjectResult(new RespostasDeErro(context.Exception.StackTrace!));
    }
  }
 }

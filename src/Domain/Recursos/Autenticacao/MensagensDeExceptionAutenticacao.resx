@@ -125,4 +125,16 @@
     <value>Voce não tem permição para acessar este recurso.</value>
     <comment/>
   </data>
+  <data name="TOKEN_INVALIDO" xml:space="preserve">
+    <value>Token de autenticação inválido.</value>
+    <comment/>
+  </data>
+  <data name="TOKEN_NAO_FORNECIDO" xml:space="preserve">
+    <value>Token de autenticação não enviado.</value>
+    <comment/>
+  </data>
+  <data name="TOKEN_EXPIRADO" xml:space="preserve">
+    <value>Token de autenticação expirado.</value>
+    <comment/>
+  </data>
 </root>

@@ -38,8 +38,11 @@ namespace API.Controllers
         // - [FromBody] indica que os dados do equipamento virão no corpo da requisição em JSON
         public async Task<IActionResult> Post(
             [FromServices] ICriarEquipamentoUseCase usecase,
-            [FromBody] RegistraEquipamentoRequest request)
+            [FromBody] RegistraEquipamentoRequest request
+            )
         {
+            Request.Headers.TryGetValue("Authorization", out var token).ToString();
+            usecase.ValidarToken(token);
             // Executa o caso de uso passando o request (com os dados do novo equipamento)
             var result = await usecase.Execute(request);
 

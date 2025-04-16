@@ -2,6 +2,8 @@ using System.IdentityModel.Tokens.Jwt; // Biblioteca para trabalhar com tokens J
 using System.Security.Claims; // Biblioteca que define "Claims" (informações sobre o usuário).
 using System.Text; // Usada para manipulação de strings e codificação.
 using Application.Services.Token; // Serviço de tokens definido na aplicação.
+using Domain;
+using Domain.Exceptions;
 using Microsoft.Extensions.Configuration; // Para acessar as configurações do aplicativo (appsettings).
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens; // Biblioteca para trabalhar com autenticação de tokens.
@@ -64,17 +66,23 @@ public class ServicoDeToken : IServicoDeToken
     /// </summary>
     /// <param name="token">Token JWT a ser validado.</param>
     /// <returns>True se o token for válido, false caso contrário.</returns>
-    public bool ValidarToken(string token)
+    public void ValidarToken(string token)
     {
+        if(string.IsNullOrWhiteSpace(token))
+        {
+            throw new ErroDeAutenticacaoException(MensagensDeExceptionAutenticacao.TOKEN_NAO_FORNECIDO);
+        }
         var tokenHandler = new JwtSecurityTokenHandler(); // Criando o manipulador para processar o token.
         
         // Recuperando a chave usada para assinar o token (do arquivo de configuração ou variáveis de ambiente).
         var chave = Encoding.UTF8.GetBytes(_config.Key);
 
+        var tokenSemBearer = token.Replace("Bearer ", "");
+
         try
         {
             // Tentando validar o token usando as configurações de validação.
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            tokenHandler.ValidateToken(tokenSemBearer, new TokenValidationParameters
             {
                 ValidateIssuer = true, // Valida o emissor do token para garantir que é de uma fonte confiável.
                 ValidateAudience = true, // Valida a audiência do token (quem deve aceitar esse token).
@@ -84,11 +92,11 @@ public class ServicoDeToken : IServicoDeToken
                 ClockSkew = TimeSpan.Zero // Ajuste de tempo para verificação de expiração (sem margem de erro).
             }, out SecurityToken validatedToken); // O token validado é retornado aqui se for válido.
 
-            return true; // Se o token for validado com sucesso, retorna true.
+            
         }
         catch
         {
-            return false; // Caso ocorra qualquer erro, o token é considerado inválido e retorna false.
+           throw new ErroDeAutenticacaoException(MensagensDeExceptionAutenticacao.TOKEN_INVALIDO); // Caso ocorra qualquer erro, o token é considerado inválido e retorna false.
         }
     }
 

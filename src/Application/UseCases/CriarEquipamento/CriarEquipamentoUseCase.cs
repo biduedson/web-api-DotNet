@@ -1,6 +1,7 @@
 // Importações necessárias
 using Application.DTOs;
 using Application.DTOs.Requests; // DTO de entrada (request)
+using Application.Services.Token;
 using Application.UseCases.CriarEquipamento.Validadores;
 using AutoMapper; // Biblioteca AutoMapper para mapear objetos
 using Domain.Entities; // Entidade de domínio Equipamento
@@ -19,13 +20,17 @@ namespace Application.UseCases.CriarEquipamento
         // Instância do AutoMapper que será usada para transformar DTOs em entidades
         public IMapper _mapper;
 
+        // Instância do Servico de token  que será usada para validar  o token enviado pela requisiçao
+        private readonly IServicoDeToken _servicoDeToken;
+
         // Construtor da classe, recebe via injeção de dependência:
         // - o repositório que lida com persistência
         // - o mapper que converte DTOs em entidades
-        public CriarEquipamentoUseCase(IEquipamentoRepository repository, IMapper mapper)
+        public CriarEquipamentoUseCase(IEquipamentoRepository repository, IMapper mapper, IServicoDeToken servicoDeToken)
         {
             _repository = repository;
             _mapper = mapper;
+            _servicoDeToken = servicoDeToken;
         }
 
         // Método principal da classe: Executa o caso de uso de criação de um equipamento
@@ -35,7 +40,7 @@ namespace Application.UseCases.CriarEquipamento
         {
             // 1. Valida os dados recebidos na requisição para garantir que estão corretos antes de prosseguir.   
             Validador(request);
-
+ 
             // 2. Mapeia os dados do request para a entidade de domínio Equipamento.
             // A instância do equipamento será criada a partir dos dados da requisição para que possamos manipulá-la internamente.
             var equipamento = _mapper.Map<Equipamento>(request);
@@ -73,6 +78,11 @@ namespace Application.UseCases.CriarEquipamento
                 // A exceção `ErroDeValidacaoException` será usada para informar ao usuário os erros de validação que ocorreram.
                 throw new ErroDeValidacaoException(mensagensDeErro);
             }
+        }
+
+        public void ValidarToken(string token)
+        {
+            _servicoDeToken.ValidarToken(token);
         }
     }
 }

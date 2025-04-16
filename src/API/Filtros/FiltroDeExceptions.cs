@@ -1,5 +1,6 @@
 using System.Net;
 using Application.DTOs.Responses.Error;
+using Domain;
 using Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -37,6 +38,18 @@ namespace API.Filtros
       // Retorna um objeto de erro contendo a lista de mensagens da exceção.
       context.Result = new BadRequestObjectResult(new RespostasDeErro(exception.MenssagensDeErro));
      }
+      
+      if(context.Exception is ErroDeAutenticacaoException)
+      {
+          // Converte a exceção para o tipo ErrorOnValidationException.
+      var exception = context.Exception as ErroDeAutenticacaoException;
+
+      // Define o código de status HTTP como 400 (Bad Request).
+      context.HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+
+      // Retorna um objeto de erro contendo a lista de mensagens da exceção.
+      context.Result = new UnauthorizedObjectResult(new RespostasDeErro(exception.MenssagenDeErro));
+      }
      
    }
 
@@ -47,7 +60,34 @@ namespace API.Filtros
     context.HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
     // Retorna um objeto de erro com uma mensagem genérica de erro desconhecido.
-    context.Result = new ObjectResult(new RespostasDeErro(context.Exception.StackTrace!));
+    context.Result = new ObjectResult(new RespostasDeErro("Erro desconhecido."));
    }
+
+   // Método para tratar falhas de autenticação (401 Unauthorized) gerados automaticamente pelo ASP.NET Core
+   private void TratarExcecaoDeAutenticacao(ExceptionContext context)
+   {
+     // Converte a exceção para o tipo ErrorOnValidationException.
+      var exception = context.Exception as ErroDeAutenticacaoException;
+
+      // Define o código de status HTTP como (401 Unauthorized)
+      context.HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+
+      // Retorna um objeto de erro contendo a lista de mensagens da exceção.
+      context.Result = new ObjectResult(new RespostasDeErro(MensagensDeExceptionAutenticacao.ACESSO_NEGADO));
+   }
+
+      // Método para tratar falhas de autorização (403 Forbidden)
+      private void TratarExcecaoDeForbiddenDoAspNetCore(ExceptionContext context)
+      {
+
+        // Converte a exceção para o tipo ErrorOnValidationException.
+        var exception = context.Exception as ErroDeValidacaoException;
+
+        // Define o código de status HTTP como (403 Forbidden)
+        context.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+
+        // Retorna um objeto de erro contendo a lista de mensagens da exceção.
+        context.Result = new ObjectResult(new RespostasDeErro(MensagensDeExceptionAutenticacao.ACESSO_NEGADO));
+      }
  }
 }

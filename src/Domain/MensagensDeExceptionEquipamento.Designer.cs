@@ -5,11 +5,12 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+
+using System.Resources;
+
+// Namespace para acesso a recursos localizados (.resx)
 namespace Domain
 {
-    // Namespace para acesso a recursos localizados (.resx)
-    using System.Resources;
-
     // Atributo indicando que este código foi gerado por ferramenta (aqui usamos "Manual")
     [System.CodeDom.Compiler.GeneratedCode("Manual", "1.0.0")]
 

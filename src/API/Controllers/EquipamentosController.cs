@@ -10,39 +10,35 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    // Define a rota base da API: nesse caso, a URL será /api/equipamentos
-    [Route("api/[controller]")]
-
-    // Indica que essa classe é um controller de API e que o comportamento padrão será RESTful
-    [ApiController]
+    /// <summary>
+    /// Controlador responsável por gerenciar operações relacionadas aos equipamentos.
+    /// </summary>
+    [Route("api/[controller]")] // Define a rota base da API: /api/equipamentos
+    [ApiController] // Indica que essa classe é um controller de API com comportamento RESTful
     public class EquipamentosController : ControllerBase
     {
-        // Define que este método responde a requisições HTTP POST (inserção de dados)
-        [HttpPost]
-
-        // Documenta o tipo de resposta esperada para esse endpoint
-
-        // Essa anotação é utilizada pelo Swagger/OpenAPI para indicar que este endpoint retorna:
-        // - Um objeto do tipo EquipamentoRegistradoResponse no corpo da resposta
-        // - E que o status HTTP da resposta será 201 (Created)
-        //
-        // typeof(RespostaDeSucessoDaApi<Object>) apenas indica o tipo da classe retornada,
-        // sem criar uma instância — é usado apenas para documentação e análise estática
-        //
-        // Isso ajuda ferramentas como Swagger a gerar uma documentação mais precisa
-        // e também melhora a legibilidade da API para desenvolvedores
+        /// <summary>
+        /// Endpoint responsável por registrar um novo equipamento.
+        /// </summary>
+        /// <param name="usecase">Caso de uso responsável pela lógica de criação de equipamento.</param>
+        /// <param name="request">Dados do equipamento enviados no corpo da requisição.</param>
+        /// <returns>Retorna uma resposta HTTP 201 Created com os dados do equipamento registrado.</returns>
+        [HttpPost] // Define que este método responde a requisições HTTP POST (inserção de dados)
         [ProducesResponseType(typeof(RespostaDeSucessoDaApi<Object>), StatusCodes.Status201Created)]
-
-        // Esse método é assíncrono e recebe dois parâmetros:
-        // - [FromServices] injeta automaticamente o caso de uso (use case) da criação de equipamento
-        // - [FromBody] indica que os dados do equipamento virão no corpo da requisição em JSON
+        // Indica ao Swagger/OpenAPI que este endpoint retorna:
+        // - Um objeto do tipo RespostaDeSucessoDaApi<Object> no corpo da resposta
+        // - E que o status HTTP da resposta será 201 (Created)
         public async Task<IActionResult> Post(
-            [FromServices] ICriarEquipamentoUseCase usecase,
-            [FromBody] RegistraEquipamentoRequest request
-            )
+            [FromServices] ICriarEquipamentoUseCase usecase, // Injeta o caso de uso responsável pela criação
+            [FromBody] RegistraEquipamentoRequest request // Recebe os dados do equipamento via corpo da requisição
+        )
         {
-            Request.Headers.TryGetValue("Authorization", out var token).ToString();
-            usecase.ValidarToken(token);
+            // Tenta obter o token de autorização do cabeçalho da requisição
+            Request.Headers.TryGetValue("Authorization", out var token);
+            
+            // Valida o token recebido
+            usecase.ValidarToken(token.ToString());
+
             // Executa o caso de uso passando o request (com os dados do novo equipamento)
             var result = await usecase.Execute(request);
 

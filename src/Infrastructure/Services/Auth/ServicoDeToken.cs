@@ -124,11 +124,26 @@ public class ServicoDeToken : IServicoDeToken
         return null; // Caso contrário, retorna null (token inválido ou sem ID).
     }
 
-    public DateTime ObterDataExpiracaoToken(string token)
+    /// <summary>
+    /// Extrai a data de expiração de um token JWT sem validá-lo.
+    /// </summary>
+    /// <param name="token">Token JWT no formato compactado (JWS ou JWE).</param>
+    /// <returns>Data e hora de expiração do token em UTC.</returns>
+    /// <remarks>
+    /// Este método utiliza o <see cref="JwtSecurityTokenHandler.ReadJwtToken(string)"/> para decodificar o token e acessar a propriedade <see cref="JwtSecurityToken.ValidTo"/>,
+    /// que representa a data de expiração do token. É importante notar que este método não realiza a validação do token.
+    /// Para garantir a integridade e validade do token, utilize o método <see cref="JwtSecurityTokenHandler.ValidateToken(string, TokenValidationParameters, out SecurityToken)"/>.
+    /// </remarks>
+   public DateTime ObterDataExpiracaoToken(string token)
     {
+        // Instancia o manipulador de tokens JWT.
         var handler = new JwtSecurityTokenHandler();
+
+        // Lê o token JWT sem validá-lo.
         var jwtToken = handler.ReadJwtToken(token);
 
-        return jwtToken.ValidTo; // Retorna a data de expiração do token.
+        // Retorna a data de expiração do token (campo 'exp'), em UTC.
+        return jwtToken.ValidTo;
     }
+
 }

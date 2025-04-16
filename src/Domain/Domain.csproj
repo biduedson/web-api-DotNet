@@ -50,4 +50,19 @@
     </EmbeddedResource>
   </ItemGroup>
 
+   <!-- Configuração para MensagensDeExceptionAutorizacao -->
+  <ItemGroup>
+    <Compile Update="MensagensDeExceptionAutorizacao.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Recursos/Autorizacao/MensagensDeExceptionAutorizacao.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Recursos/Autorizacao/MensagensDeExceptionAutorizacao.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MensagensDeExceptionAutorizacao.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

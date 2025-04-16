@@ -11,9 +11,6 @@ using System.Resources;
 // Namespace necessário para gerenciar recursos localizados
 namespace Domain
 {
-    
-   
-
     // Indica que este código foi gerado manualmente (simulando ferramenta)
     [System.CodeDom.Compiler.GeneratedCode("Manual", "1.0.0")]
 
@@ -22,13 +19,13 @@ namespace Domain
 
     // Indica que essa classe é gerada por ferramenta
     [System.Runtime.CompilerServices.CompilerGenerated]
-    public class MensagensDeExceptionUsuario
+    public class MensagensDeExceptionAutorizacao
     {
         // Responsável por acessar os dados do .resx (ResourceManager do .NET)
         private static ResourceManager resourceMan;
 
         // Construtor privado para evitar instanciamento externo
-        internal MensagensDeExceptionUsuario() { }
+        internal MensagensDeExceptionAutorizacao() { }
 
         /// <summary>
         /// Retorna a instância do ResourceManager para este recurso.
@@ -40,65 +37,20 @@ namespace Domain
                 if (object.ReferenceEquals(resourceMan, null))
                 {
                     // Nome deve ser o caminho completo (namespace + nome do .resx)
-                    resourceMan = new ResourceManager("Domain.Recursos.Usuario.MensagensDeExceptionUsuario", typeof(MensagensDeExceptionUsuario).Assembly);
+                    resourceMan = new ResourceManager("Domain.Recursos.Autorizacao.MensagensDeExceptionAutorizacao", typeof(MensagensDeExceptionAutorizacao).Assembly);
                 }
                 return resourceMan;
             }
         }
 
         /// <summary>
-        /// Retorna a mensagem: "O nome do usuário é obrigatório."
+        /// Retorna a mensagem: "Voce não tem permição para acessar este recurso.."
         /// </summary>
-        public static string NOME_OBRIGATORIO
+        public static string ACESSO_NEGADO
         {
             get
             {
-                return ResourceManager.GetString("NOME_OBRIGATORIO");
-            }
-        }
-
-        /// <summary>
-        /// Retorna a mensagem: "O e-mail é obrigatório."
-        /// </summary>
-        public static string EMAIL_OBRIGATORIO
-        {
-            get
-            {
-                return ResourceManager.GetString("EMAIL_OBRIGATORIO");
-            }
-        }
-
-        /// <summary>
-        /// Retorna a mensagem: "Este e-mail ja esta sendo usado."
-        /// </summary>
-        public static string EMAIL_JA_USADO
-        {
-            get
-            {
-                return ResourceManager.GetString("EMAIL_JA_USADO");
-            }
-        }
-
-
-        /// <summary>
-        /// Retorna a mensagem: "A senha é obrigatória."
-        /// </summary>
-        public static string SENHA_OBRIGATORIO
-        {
-            get
-            {
-                return ResourceManager.GetString("SENHA_OBRIGATORIO");
-            }
-        }
-
-        /// <summary>
-        /// Retorna a mensagem: "A senha precisa ter pelo menos 6 caracteres;"
-        /// </summary>
-        public static string SENHA_INVALIDA
-        {
-            get
-            {
-                return ResourceManager.GetString("SENHA_INVALIDA");
+                return ResourceManager.GetString("ACESSO_NEGADO");
             }
         }
     }

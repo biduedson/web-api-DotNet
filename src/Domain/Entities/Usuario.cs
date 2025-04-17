@@ -9,6 +9,7 @@ public class Usuario
     public bool Ativo { get; set; } = true;
     public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
     public bool Administrador {get; set;} = false;
+    public List<ReservaDeEquipamento> Reservas {get; set;} = new();
 
 
     public void TornarUsuarioAdmin() => Administrador = true;

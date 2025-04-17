@@ -93,14 +93,10 @@ namespace Infrastructure
 
             services.AddScoped<ICriptografiaDeSenha>(provider =>
             {
-                // Busca o IConfiguration diretamente do container de serviços
-                var config = provider.GetRequiredService<IConfiguration>();
-
                 // Obtém a chave adicional de criptografia das configurações
-                var additionalKey = config.GetValue<string>("Settings:Passwords:AdditionalKey");
-
+                var AdditionalKey = configuration.GetValue<string>("Settings:Passwords:AdditionalKey");
                 // Retorna uma nova instância da implementação com os parâmetros necessários
-                return new CriptografiaDeSenha(config, additionalKey!);
+                 return new CriptografiaDeSenha(configuration, AdditionalKey!);
             });
         }
     }

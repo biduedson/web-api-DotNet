@@ -40,11 +40,6 @@ namespace Application
             services.AddAutoMapper(typeof(InjecaoDeDependencia).Assembly);
         }
 
-        // Método privado para adicionar o serviço de criptografia de senha no contêiner de dependência.
-        // A chave adicional de criptografia é obtida da configuração da aplicação.
-
-       
-
         // Aqui registramos os casos de uso (use cases), que são as regras de negócio da aplicação.
         // Cada use case é uma classe que executa uma ação específica (ex: criar, listar, atualizar...).
         private static void AdicionarUseCases(IServiceCollection services)

@@ -18,6 +18,10 @@ namespace Infrastructure.Data.Context
         // Cada item dessa tabela será um objeto do tipo Usuario.
         public DbSet<Usuario> Usuarios {get; set;}
 
+        // Representa uma tabela no banco chamada "ReservaDeEquipamento".
+        // Cada item dessa tabela será um objeto do tipo ReservaDeEquipamentos.
+        public DbSet<ReservaDeEquipamento> ReservaDeEquipamentos {get; set;}
+
         // ============================================================
         // O que significa ": base(options)"?
         //

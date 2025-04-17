@@ -46,23 +46,12 @@ namespace Domain
         /// <summary>
         /// Retorna a mensagem: "O nome do equipamento é obrigatório."
         /// </summary>
-        public static string NOME_DE_EQUIPAMENTO_OBRIGATORIO
-        {
-            get
-            {
-                return ResourceManager.GetString("NOME_DE_EQUIPAMENTO_OBRIGATORIO");
-            }
-        }
-
+        public static string NOME_DE_EQUIPAMENTO_OBRIGATORIO => ResourceManager.GetString("NOME_DE_EQUIPAMENTO_OBRIGATORIO");
+       
         /// <summary>
         /// Retorna a mensagem: "A descrição do equipamento é obrigatória."
         /// </summary>
-        public static string DESCRICAO_DE_EQUIPAMENTO_OBRIGATORIO
-        {
-            get
-            {
-                return ResourceManager.GetString("DESCRICAO_DE_EQUIPAMENTO_OBRIGATORIO");
-            }
-        }
+        public static string DESCRICAO_DE_EQUIPAMENTO_OBRIGATORIO => ResourceManager.GetString("DESCRICAO_DE_EQUIPAMENTO_OBRIGATORIO");
+       
     }
 }

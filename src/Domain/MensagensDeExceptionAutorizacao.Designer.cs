@@ -46,12 +46,7 @@ namespace Domain
         /// <summary>
         /// Retorna a mensagem: "Voce não tem permição para acessar este recurso.."
         /// </summary>
-        public static string ACESSO_NEGADO
-        {
-            get
-            {
-                return ResourceManager.GetString("ACESSO_NEGADO");
-            }
-        }
+        public static string ACESSO_NEGADO => ResourceManager.GetString("ACESSO_NEGADO");
+       
     }
 }

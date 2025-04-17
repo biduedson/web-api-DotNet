@@ -45,56 +45,27 @@ namespace Domain
         /// <summary>
         /// Retorna a mensagem: "Usuário ou senha invalidos."
         /// </summary>
-        public static string CREDENCIAIS_INVALIDAS
-        {
-            get
-            {
-                return ResourceManager.GetString("CREDENCIAIS_INVALIDAS");
-            }
-        }
-
+        public static string CREDENCIAIS_INVALIDAS => ResourceManager.GetString("CREDENCIAIS_INVALIDAS");
+        
         /// <summary>
         /// Retorna a mensagem: "Voce não tem permição para acessar este recurso."
         /// </summary>
-        public static string ACESSO_NEGADO
-        {
-            get
-            {
-                return ResourceManager.GetString("ACESSO_NEGADO");
-            }
-        }
-
-         /// <summary>
+        public static string ACESSO_NEGADO => ResourceManager.GetString("ACESSO_NEGADO");
+       
+        /// <summary>
         /// Retorna a mensagem: "Token de autenticação inválido."
         /// </summary>
-        public static string TOKEN_INVALIDO
-        {
-            get
-            {
-                return ResourceManager.GetString("TOKEN_INVALIDO");
-            }
-        }
-
-         /// <summary>
+        public static string TOKEN_INVALIDO => ResourceManager.GetString("TOKEN_INVALIDO");
+       
+        /// <summary>
         /// Retorna a mensagem: "Token de autenticação não enviado."
         /// </summary>
-        public static string TOKEN_NAO_FORNECIDO
-        {
-            get
-            {
-                return ResourceManager.GetString("TOKEN_NAO_FORNECIDO");
-            }
-        }
-
+        public static string TOKEN_NAO_FORNECIDO =>ResourceManager.GetString("TOKEN_NAO_FORNECIDO");
+       
         /// <summary>
         /// Retorna a mensagem: "Token de autenticação expirado."
         /// </summary>
-        public static string TOKEN_EXPIRADO
-        {
-            get
-            {
-                return ResourceManager.GetString("TOKEN_EXPIRADO");
-            }
-        }
+        public static string TOKEN_EXPIRADO => ResourceManager.GetString("TOKEN_EXPIRADO");
+        
     }
 }

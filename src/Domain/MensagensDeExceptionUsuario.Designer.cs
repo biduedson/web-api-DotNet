@@ -49,57 +49,27 @@ namespace Domain
         /// <summary>
         /// Retorna a mensagem: "O nome do usuário é obrigatório."
         /// </summary>
-        public static string NOME_OBRIGATORIO
-        {
-            get
-            {
-                return ResourceManager.GetString("NOME_OBRIGATORIO");
-            }
-        }
+        public static string NOME_OBRIGATORIO => ResourceManager.GetString("NOME_OBRIGATORIO"); 
 
         /// <summary>
         /// Retorna a mensagem: "O e-mail é obrigatório."
         /// </summary>
-        public static string EMAIL_OBRIGATORIO
-        {
-            get
-            {
-                return ResourceManager.GetString("EMAIL_OBRIGATORIO");
-            }
-        }
+        public static string EMAIL_OBRIGATORIO => ResourceManager.GetString("EMAIL_OBRIGATORIO");
 
         /// <summary>
         /// Retorna a mensagem: "Este e-mail ja esta sendo usado."
         /// </summary>
-        public static string EMAIL_JA_USADO
-        {
-            get
-            {
-                return ResourceManager.GetString("EMAIL_JA_USADO");
-            }
-        }
-
+        public static string EMAIL_JA_USADO => ResourceManager.GetString("EMAIL_JA_USADO");     
 
         /// <summary>
         /// Retorna a mensagem: "A senha é obrigatória."
         /// </summary>
-        public static string SENHA_OBRIGATORIO
-        {
-            get
-            {
-                return ResourceManager.GetString("SENHA_OBRIGATORIO");
-            }
-        }
+        public static string SENHA_OBRIGATORIO => ResourceManager.GetString("SENHA_OBRIGATORIO");
 
         /// <summary>
         /// Retorna a mensagem: "A senha precisa ter pelo menos 6 caracteres;"
         /// </summary>
-        public static string SENHA_INVALIDA
-        {
-            get
-            {
-                return ResourceManager.GetString("SENHA_INVALIDA");
-            }
-        }
+        public static string SENHA_INVALIDA => ResourceManager.GetString("SENHA_INVALIDA");
+       
     }
 }

@@ -3,11 +3,10 @@ using Application.UseCases.autenticacao;
 using AutoMapper;
 using Domain.Repositories.UsuarioRepository;
 using Application.Shared;
-using Domain.Entities;
 using Domain.Exceptions;
 using Application.Services.Token;
-using Application.criptografia;
 using Domain;
+using Application.Services.Criptografia;
 
 namespace Application.UseCases.Autenticacao
 {
@@ -20,10 +19,10 @@ namespace Application.UseCases.Autenticacao
 
         private readonly IServicoDeToken _servicoDeToken;
 
-        private readonly CriptografiaDeSenha _criptoGrafiaDeSenha;
+        private readonly ICriptografiaDeSenha _criptoGrafiaDeSenha;
 
 
-        public AutenticacaoUseCase(IUsuarioRepository repository, IMapper mapper, IServicoDeToken servicoDeToken, CriptografiaDeSenha criptoGrafiaDeSenha)
+        public AutenticacaoUseCase(IUsuarioRepository repository, IMapper mapper, IServicoDeToken servicoDeToken, ICriptografiaDeSenha criptoGrafiaDeSenha)
         {
             _repository = repository;
             _mapper = mapper;
@@ -46,7 +45,7 @@ namespace Application.UseCases.Autenticacao
 
         private async Task<UsuarioAutenticado> Autenticar(AutenticacaoRequest request)
         {
-          var senhaCriptografada = _criptoGrafiaDeSenha.Criptografar(request.Senha);
+          var senhaCriptografada = _criptoGrafiaDeSenha.CriptografarSenha(request.Senha);
           var usuario = await _repository.ObterPorEmail(request.Email);
           
           if(usuario == null || usuario.Senha != senhaCriptografada)

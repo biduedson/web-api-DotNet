@@ -3,32 +3,44 @@ using System.Security.Cryptography;
 
 // Importa o namespace necessário para manipular codificação de strings (ex: UTF-8) e construir strings com eficiência.
 using System.Text;
+using Application.Services.Criptografia;
+using Microsoft.Extensions.Configuration;
 
-namespace Application.criptografia
+namespace Infrastructure.Services.Criptografia
 {
     /// <summary>
     /// Classe responsável por realizar a criptografia (hash) de senhas utilizando o algoritmo SHA-512.
     /// Essa técnica é usada para proteger senhas antes de armazená-las no banco de dados.
     /// </summary>
-    public class CriptografiaDeSenha
+    public class CriptografiaDeSenha : ICriptografiaDeSenha
     {
+
+        private readonly IConfiguration _configuration;
+
         // Campo privado e somente leitura que armazena uma "chave adicional" (salt).
         // Essa chave torna o hash mais seguro, dificultando ataques como dicionário ou rainbow tables.
         private readonly string _chaveAdicional;
+
+       
 
         /// <summary>
         /// Construtor que recebe uma chave adicional externa.
         /// Essa chave pode ser configurada no appsettings.json ou vinda de uma variável de ambiente.
         /// </summary>
         /// <param name="chaveAdicional">Chave secreta que será combinada com a senha antes de aplicar o hash.</param>
-        public CriptografiaDeSenha(string chaveAdicional) => _chaveAdicional = chaveAdicional;
-
+        public CriptografiaDeSenha(IConfiguration configuration,string chaveAdicional )
+        {
+             _configuration = configuration;
+             _chaveAdicional = configuration.GetValue<string>("Settings:Passwords:AdditionalKey")!;
+             
+        }
+         
         /// <summary>
         /// Criptografa a senha recebida como parâmetro usando SHA-512 + chave adicional.
         /// </summary>
         /// <param name="senha">Senha em texto puro (plain text) fornecida pelo usuário.</param>
         /// <returns>String representando o hash criptografado da senha, em formato hexadecimal.</returns>
-        public string Criptografar(string senha)
+        public string CriptografarSenha(string senha)
         {
             // Concatena a senha original com a chave adicional (salt).
             // Isso torna a senha mais imprevisível mesmo que duas pessoas usem a mesma senha.

@@ -1,8 +1,8 @@
 
 
 using System.Security.Cryptography.X509Certificates;
-using Application.criptografia;
 using Application.DTOs.Requests;
+using Application.Services.Criptografia;
 using Application.Services.Token;
 using Application.UseCases.CriarUsuario.Validadores;
 using AutoMapper;
@@ -23,7 +23,7 @@ namespace Application.UseCases.CriarUsuario
         public IMapper _mapper;
 
           // Serviço de criptografia para proteger senhas.
-        private readonly CriptografiaDeSenha _criptografiaDeSenha;
+        private readonly ICriptografiaDeSenha _criptografiaDeSenha;
 
          // Construtor da classe, recebe via injeção de dependência:
          // - o repositório que lida com persistência
@@ -32,7 +32,7 @@ namespace Application.UseCases.CriarUsuario
         // Serviço de manipulacao de tokens.
         private readonly IServicoDeToken _servicoDetoken;
         
-        public CriarUsuarioUseCase(IUsuarioRepository repository, IMapper mapper, CriptografiaDeSenha criptografiaDeSenha, IServicoDeToken servicoDetoken)
+        public CriarUsuarioUseCase(IUsuarioRepository repository, IMapper mapper, ICriptografiaDeSenha criptografiaDeSenha, IServicoDeToken servicoDetoken)
         {
             _repository = repository;
             _mapper = mapper;
@@ -55,7 +55,7 @@ namespace Application.UseCases.CriarUsuario
 
           // 3. Criptografa a senha do usuário antes de salvar no banco de dados.
           // A senha deve ser criptografada para garantir que dados sensíveis não sejam armazenados em formato simples.
-           usuario.Senha = _criptografiaDeSenha.Criptografar(request.Senha);
+           usuario.Senha = _criptografiaDeSenha.CriptografarSenha(request.Senha);
 
 
            // 4. Aqui chamamos o repositório responsável por adicionar o usuário no banco de dados.

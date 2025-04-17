@@ -3,7 +3,6 @@ using Application.UseCases.CriarEquipamento;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Application.UseCases.CriarUsuario;
-using Application.criptografia;
 using Application.UseCases.autenticacao;
 using Application.UseCases.Autenticacao;
 
@@ -22,9 +21,6 @@ namespace Application
 
         public static void AdicionarApplication(this IServiceCollection services, IConfiguration configuration)
         {
-
-            // Adiciona o serviço de criptografia de senha.
-            AdicionarCriptografiaDesenha(services,configuration);
 
             // Registra os perfis do AutoMapper da camada Application
             AdicionarAutoMapper(services);
@@ -47,12 +43,7 @@ namespace Application
         // Método privado para adicionar o serviço de criptografia de senha no contêiner de dependência.
         // A chave adicional de criptografia é obtida da configuração da aplicação.
 
-        private static void AdicionarCriptografiaDesenha(IServiceCollection services, IConfiguration configuration)
-        {
-            // Obtém a chave adicional de criptografia das configurações.
-            var AdditionalKey = configuration.GetValue<string>("Settings:Passwords:AdditionalKey");
-            services.AddScoped(option => new CriptografiaDeSenha(AdditionalKey!));
-        }
+       
 
         // Aqui registramos os casos de uso (use cases), que são as regras de negócio da aplicação.
         // Cada use case é uma classe que executa uma ação específica (ex: criar, listar, atualizar...).

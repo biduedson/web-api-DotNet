@@ -141,7 +141,7 @@ public class ServicoDeToken : IServicoDeToken
 
         // Lê o token JWT sem validá-lo.
         var jwtToken = handler.ReadJwtToken(token);
-
+   
         // Retorna a data de expiração do token (campo 'exp'), em UTC.
         return jwtToken.ValidTo;
     }

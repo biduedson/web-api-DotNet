@@ -1,10 +1,12 @@
 // Importa o contexto do banco de dados (AppDbContext), que representa as entidades e as tabelas do banco
+using Application.Services.Criptografia;
 using Application.Services.Token;
 using Domain.Repositories.EquipamentoRepository;
 using Domain.Repositories.UsuarioRepository;
 using Infrastructure.Data.Context;
 using Infrastructure.Data.Repositories;
 using Infrastructure.Services.Auth;
+using Infrastructure.Services.Criptografia;
 
 // Importa os recursos do Entity Framework Core necessários para configurar o banco de dados
 using Microsoft.EntityFrameworkCore;
@@ -45,59 +47,61 @@ namespace Infrastructure
             */
 
             // Obtém a string de conexão chamada "Default" do arquivo de configuração (appsettings.json, por exemplo)
-            // O arquivo de configuração pode ter valores como strings de conexão ou variáveis de ambiente.
-            // O .NET verifica automaticamente variáveis de ambiente, como "ConnectionStrings:Default".
             var connectionString = configuration.GetConnectionString("Default");
-            
-            // Cria a versão do servidor MySQL que será usada pelo EF Core (aqui ainda sem especificar, você pode definir a versão exata)
+
+            // Cria a versão do servidor MySQL que será usada pelo EF Core
             var serverVersion = new MySqlServerVersion(new Version());
 
             /*
             🔧 services.AddDbContext<AppDbContext>(...)
             - Registra o AppDbContext na injeção de dependência como um serviço.
             - Toda vez que alguém solicitar um AppDbContext via construtor, o .NET irá fornecer uma instância configurada.
-
-            ⚙️ dbContextOptions =>
-            - Lambda que permite configurar as opções do contexto.
-            - Aqui usamos para dizer qual banco de dados usar e qual string de conexão utilizar.
             */
             services.AddDbContext<AppDbContext>(dbContextOptions =>
             {
-                // Configura o AppDbContext para usar o MySQL com a string de conexão e a versão do servidor
                 dbContextOptions.UseMySql(connectionString, serverVersion);
             });
 
             // Bind do bloco "Jwt" para ConfiguracoesJwt
-            // A configuração JWT (token) é carregada a partir de uma seção do arquivo appsettings.json
-            // Ou pode ser substituída por variáveis de ambiente, caso haja um valor específico para produção ou outras configurações.
             var jwtSection = configuration.GetSection("Jwt");
-            Console.WriteLine(jwtSection);
             services.Configure<ConfiguracaoJwt>(jwtSection);
 
+            // Registro dos repositórios seguindo o padrão de abstração via interfaces
+            // ✅ AddScoped: Uma instância será criada por requisição HTTP (ideal para uso com DbContext)
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            services.AddScoped<IEquipamentoRepository, EquipamentoRepository>();
+
+            // Registro do serviço de token com tempo de vida Singleton
+            services.AddSingleton<IServicoDeToken, ServicoDeToken>();
+
+            // Chamada do método que registra o serviço de criptografia
+            AdicionarCriptografiaDesenha(services, configuration);
+        }
+
+        /// <summary>
+        /// Registra a dependência do serviço de criptografia de senha com injeção de configuração personalizada.
+        /// </summary>
+        private static void AdicionarCriptografiaDesenha(IServiceCollection services, IConfiguration configuration)
+        {
             /*
-            🔧 O que acontece com `configuration.GetSection("Jwt")`?
-            - O código busca uma seção específica do arquivo de configurações chamada "Jwt".
-            - Essa seção pode conter configurações como a chave secreta, o emissor e a audiência do JWT.
-            - As configurações do arquivo `appsettings.json` são usadas por padrão, mas podem ser sobrecarregadas por variáveis de ambiente.
+            ✅ Registrando a dependência pela interface ICriptografiaDeSenha — padrão de abstração.
+
+            🔁 Usando uma lambda (factory) porque precisa passar um parâmetro (AdditionalKey) que não está disponível diretamente no container.
+
+            🧩 Garantindo que a injeção de dependência funcione mesmo com parâmetros externos (como configurações).
             */
 
-            // Aqui registramos os repositórios na injeção de dependência:
-            // ✅ O que significa AddScoped?
-            // - Significa que a instância da classe será criada **uma única vez por requisição HTTP**.
-            // - Durante uma mesma requisição, todos os lugares que solicitarem esse serviço (via construtor, por exemplo)
-            //   receberão **a mesma instância**.
-            // - Mas em uma nova requisição, será criada **uma nova instância**.
-            //
-            // Esse comportamento é ideal para serviços que usam DbContext, por exemplo, onde você quer manter
-            // a mesma conexão/transação durante a requisição toda.
+            services.AddScoped<ICriptografiaDeSenha>(provider =>
+            {
+                // Busca o IConfiguration diretamente do container de serviços
+                var config = provider.GetRequiredService<IConfiguration>();
 
-            // Exemplo: Se um controller usa ICriarUsuarioUseCase, e esse use case usa IUsuarioRepository,
-            // ambos compartilharão a mesma instância durante aquela requisição.
-             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-             services.AddScoped<IEquipamentoRepository, EquipamentoRepository>();
+                // Obtém a chave adicional de criptografia das configurações
+                var additionalKey = config.GetValue<string>("Settings:Passwords:AdditionalKey");
 
-             // Registro do serviço de token com IOptions
-             services.AddSingleton<IServicoDeToken, ServicoDeToken>();
+                // Retorna uma nova instância da implementação com os parâmetros necessários
+                return new CriptografiaDeSenha(config, additionalKey!);
+            });
         }
     }
 }

@@ -65,4 +65,19 @@
     </EmbeddedResource>
   </ItemGroup>
 
+   <!-- Configuração para MensagensDeExceptionAutorizacao -->
+  <ItemGroup>
+    <Compile Update="MensagensDeExceptionReservaDeEquipamento.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Recursos/ReservaDeEquipamento/MensagensDeExceptionReservaDeEquipamento.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Recursos/ReservaDeEquipamento/MensagensDeExceptionReservaDeEquipamento.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MensagensDeExceptionReservaDeEquipamento.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

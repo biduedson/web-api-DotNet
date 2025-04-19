@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Application.UseCases.CriarUsuario;
 using Application.UseCases.Autenticacao;
+using Application.UseCases.ReservaDeEquipamentoUseCase;
 
 namespace Application
 {
@@ -63,6 +64,7 @@ namespace Application
             services.AddScoped<ICriarEquipamentoUseCase, CriarEquipamentoUseCase>();
             services.AddScoped<ICriarUsuarioUseCase, CriarUsuarioUseCase>();
             services.AddScoped<IAutenticacaoUseCase, AutenticacaoUseCase>();
+            services.AddScoped<ICriarReservaDeEquipamentoUseCase, CriarReservaDeEquipamentoUseCase>();
             // Adicione outros casos de uso aqui conforme necessário:
             // services.AddScoped<IAtualizarEquipamentoUseCase, AtualizarEquipamentoUseCase>();
             // services.AddScoped<IDeletarUsuarioUseCase, DeletarUsuarioUseCase>();

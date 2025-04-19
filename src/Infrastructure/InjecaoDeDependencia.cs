@@ -2,6 +2,7 @@
 using Application.Services.Criptografia;
 using Application.Services.Token;
 using Domain.Repositories.EquipamentoRepository;
+using Domain.Repositories.ReservaDeEquipamentosRepository;
 using Domain.Repositories.UsuarioRepository;
 using Infrastructure.Data.Context;
 using Infrastructure.Data.Repositories;
@@ -70,6 +71,7 @@ namespace Infrastructure
             // ✅ AddScoped: Uma instância será criada por requisição HTTP (ideal para uso com DbContext)
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<IEquipamentoRepository, EquipamentoRepository>();
+            services.AddScoped<IReservaDeEquipamentosRepository, ReservaDeEquipamentoRepository>();
 
             // Registro do serviço de token com tempo de vida Singleton
             services.AddSingleton<IServicoDeToken, ServicoDeToken>();

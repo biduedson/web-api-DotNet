@@ -29,7 +29,7 @@ namespace Infrastructure.Data.Repositories
         {
             await _context.ReservaDeEquipamentos.AddAsync(reservaDeEquipamento);
             await _context.SaveChangesAsync();
-            return reservaDeEquipamento;
+            return   reservaDeEquipamento;
         }
 
         /// <summary>

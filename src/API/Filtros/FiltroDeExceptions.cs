@@ -14,6 +14,8 @@ namespace API.Filtros
     {
         /// <summary>
         /// Método invocado automaticamente quando uma exceção ocorre durante o processamento de uma requisição.
+        /// - Verifica se a exceção é uma exceção personalizada do projeto ou uma exceção desconhecida.
+        /// - Chama os métodos específicos de tratamento para cada tipo de exceção.
         /// </summary>
         /// <param name="context">Contexto da exceção.</param>
         public void OnException(ExceptionContext context)
@@ -27,6 +29,9 @@ namespace API.Filtros
 
         /// <summary>
         /// Método responsável por lidar com exceções personalizadas do projeto.
+        /// - Verifica o tipo de exceção (ErroDeValidacaoException ou ErroDeAutenticacaoException).
+        /// - Define o código de status HTTP adequado.
+        /// - Retorna um objeto de erro com as mensagens apropriadas.
         /// </summary>
         /// <param name="context">Contexto da exceção.</param>
         private void TratarExcecaoDoProjeto(ExceptionContext context)
@@ -56,6 +61,8 @@ namespace API.Filtros
 
         /// <summary>
         /// Método responsável por lidar com exceções desconhecidas.
+        /// - Define o código de status HTTP como 500 (Internal Server Error).
+        /// - Retorna um objeto de erro com uma mensagem genérica de erro desconhecido.
         /// </summary>
         /// <param name="context">Contexto da exceção.</param>
         private void TratarExcecaoDesconhecida(ExceptionContext context)
@@ -69,6 +76,8 @@ namespace API.Filtros
 
         /// <summary>
         /// Método para tratar falhas de autenticação (401 Unauthorized) geradas automaticamente pelo ASP.NET Core.
+        /// - Converte a exceção para o tipo ErroDeAutenticacaoException.
+        /// - Retorna uma resposta de erro com a mensagem de acesso negado.
         /// </summary>
         /// <param name="context">Contexto da exceção.</param>
         private void TratarExcecaoDeAutenticacao(ExceptionContext context)
@@ -85,6 +94,8 @@ namespace API.Filtros
 
         /// <summary>
         /// Método para tratar falhas de autorização (403 Forbidden).
+        /// - Converte a exceção para o tipo ErroDeValidacaoException.
+        /// - Retorna uma resposta de erro com a mensagem de acesso negado.
         /// </summary>
         /// <param name="context">Contexto da exceção.</param>
         private void TratarExcecaoDeForbiddenDoAspNetCore(ExceptionContext context)

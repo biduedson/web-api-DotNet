@@ -1,21 +1,41 @@
-// Importações
-using AutoMapper; // Biblioteca responsável pelo mapeamento entre classes
-using Application.DTOs.Requests; // Classe RegistraEquipamentoRequest
-using Domain.Entities; // Entidade Equipamento
+// ===========================
+//         IMPORTAÇÕES
+// ===========================
 
-namespace Application.Services.AutoMapper;
+using AutoMapper; // Biblioteca responsável pelo mapeamento entre objetos (DTOs e entidades)
+using Application.DTOs.Requests; // Contém os DTOs utilizados nas requisições
+using Domain.Entities; // Contém as entidades do domínio
 
-// Classe AutoMapping herda de Profile, que é uma classe base do AutoMapper
-// Essa herança é necessária para configurar os mapeamentos
-public class AutoMapping : Profile
+namespace Application.Services.AutoMapper
 {
-    // Construtor da classe AutoMapping
-    // O AutoMapper irá chamar esse construtor para registrar os mapeamentos
-    public AutoMapping()
+    /// <summary>
+    /// Classe responsável por configurar os mapeamentos entre os DTOs de entrada (Requests) e as entidades do domínio.
+    /// Herda de Profile, que é a classe base do AutoMapper usada para definir os mapeamentos.
+    /// Essa classe é registrada no container de injeção de dependência para que o AutoMapper saiba como realizar as conversões.
+    /// </summary>
+    public class AutoMapping : Profile
     {
-        // Aqui fazemos o mapeamento de RegistraEquipamentoRequest para Equipamento
-        // Isso diz ao AutoMapper como transformar um DTO de request em uma entidade
-        CreateMap<RegistraEquipamentoRequest, Equipamento>();
-        CreateMap<RegistrarUsuarioRequest, Usuario>();
+        /// <summary>
+        /// Construtor onde são definidos os mapeamentos entre as classes.
+        /// Cada CreateMap informa ao AutoMapper como transformar um tipo de objeto em outro.
+        /// Essa configuração é essencial para facilitar a conversão de DTOs em entidades e vice-versa.
+        /// </summary>
+        public AutoMapping()
+        {
+            /// <summary>
+            /// Mapeia automaticamente os dados de RegistraEquipamentoRequest para a entidade Equipamento.
+            /// </summary>
+            CreateMap<RegistraEquipamentoRequest, Equipamento>();
+
+            /// <summary>
+            /// Mapeia automaticamente os dados de RegistrarUsuarioRequest para a entidade Usuario.
+            /// </summary>
+            CreateMap<RegistrarUsuarioRequest, Usuario>();
+
+            /// <summary>
+            /// Mapeia automaticamente os dados de ReservaDeEquipamentoRequest para a entidade ReservaDeEquipamento.
+            /// </summary>
+            CreateMap<ReservaDeEquipamentoRequest, ReservaDeEquipamento>();
+        }
     }
 }

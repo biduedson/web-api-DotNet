@@ -12,60 +12,83 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data.Repositories
 {
-    // Implementação concreta do repositório de Usuario, baseada na interface IUsuarioRepository
+    /// <summary>
+    /// Implementação concreta do repositório de Usuario, baseada na interface IUsuarioRepository.
+    /// Essa classe é responsável por acessar o banco de dados para operações relacionadas à entidade Usuario.
+    /// </summary>
     public class UsuarioRepository : IUsuarioRepository
     {
         // Injeção de dependência do contexto do banco de dados (AppDbContext)
         private readonly AppDbContext _context;
 
-        // Construtor que recebe o contexto e armazena em um campo privado
+        /// <summary>
+        /// Construtor que recebe o contexto e o armazena em um campo privado.
+        /// </summary>
         public UsuarioRepository(AppDbContext context) => _context = context;
-       
-        // Método que busca um Usuario específico por seu ID
+
+        /// <summary>
+        /// Busca um usuário específico pelo seu identificador único (ID).
+        /// </summary>
+        /// <param name="id">Identificador único do usuário.</param>
+        /// <returns>Usuário correspondente ao ID ou null se não encontrado.</returns>
         public async Task<Usuario?> ObterPorIdAsync(Guid id)
         {
-          // Usa LINQ para buscar o primeiro usuario com o ID fornecido
-          // Pode retornar null se não encontrar
-          return await _context.Usuarios.FirstOrDefaultAsync(usuario => usuario.Id == id);
+            // Usa LINQ para buscar o primeiro usuário com o ID fornecido
+            return await _context.Usuarios.FirstOrDefaultAsync(usuario => usuario.Id == id);
         }
 
-        // Método que busca um Usuarioo específico por seu e-mail
+        /// <summary>
+        /// Busca um usuário específico pelo seu e-mail.
+        /// </summary>
+        /// <param name="email">E-mail do usuário.</param>
+        /// <returns>Usuário correspondente ao e-mail ou null se não encontrado.</returns>
         public async Task<Usuario?> ObterPorEmail(string email)
         {
-          // Usa LINQ para buscar o primeiro usuario com o e-mail fornecido
-          // Pode retornar null se não encontrar
-          return await _context.Usuarios.FirstOrDefaultAsync(usuario => usuario.Email == email);
+            // Usa LINQ para buscar o primeiro usuário com o e-mail fornecido
+            return await _context.Usuarios.FirstOrDefaultAsync(usuario => usuario.Email == email);
         }
 
-        // Método que retorna todos os equipamentos cadastrados no banco
+        /// <summary>
+        /// Retorna todos os usuários cadastrados no banco de dados.
+        /// </summary>
+        /// <returns>Lista de todos os usuários.</returns>
         public async Task<IEnumerable<Usuario>> ListarTodosAsync()
         {
             return await _context.Usuarios.ToListAsync();
         }
 
-        // Método responsável por adicionar um novo Usuario no banco
+        /// <summary>
+        /// Adiciona um novo usuário no banco de dados.
+        /// </summary>
+        /// <param name="usuario">Objeto do tipo Usuario que será adicionado.</param>
         public async Task AdicionarAsync(Usuario usuario)
         {
             // Adiciona a entidade de forma assíncrona no DbSet
             await _context.Usuarios.AddAsync(usuario);
 
-             // Salva as alterações no banco
+            // Salva as alterações no banco
             await _context.SaveChangesAsync();
         }
 
-        // Método para atualizar um Usuario já existente
+        /// <summary>
+        /// Atualiza os dados de um usuário existente no banco de dados.
+        /// </summary>
+        /// <param name="usuario">Usuário com os dados atualizados.</param>
         public async Task AtualizarAsync(Usuario usuario)
         {
-          // Marca a entidade como "Modified" para que o EF Core atualize no banco
-          _context.Usuarios.Update(usuario);
+            // Marca a entidade como "Modified" para que o EF Core a atualize no banco
+            _context.Usuarios.Update(usuario);
 
-          // Salva as alterações no banco
-          await _context.SaveChangesAsync();
+            // Salva as alterações no banco
+            await _context.SaveChangesAsync();
         }
-        
-        // Método assíncrono que verifica se já existe um usuário ativo com o e-mail informado
+
+        /// <summary>
+        /// Verifica se já existe um usuário ativo com o e-mail informado.
+        /// </summary>
+        /// <param name="email">E-mail que será verificado.</param>
+        /// <returns>True se o e-mail já estiver cadastrado e ativo, false caso contrário.</returns>
         public async Task<bool> ExisteEmailCadastradoAsync(string email) =>
-          await _context.Usuarios.AnyAsync(usuario => usuario.Email.Equals(email) && usuario.Ativo);
-        
+            await _context.Usuarios.AnyAsync(usuario => usuario.Email.Equals(email) && usuario.Ativo);
     }
 }

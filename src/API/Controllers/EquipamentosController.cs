@@ -1,6 +1,8 @@
 // Importa os DTOs (Data Transfer Objects) usados para entrada e saída de dados da API
 using Application.DTOs;
 using Application.DTOs.Requests;
+using Application.DTOs.Responses;
+
 
 // Importa o caso de uso responsável por criar equipamentos
 using Application.UseCases.CriarEquipamento;

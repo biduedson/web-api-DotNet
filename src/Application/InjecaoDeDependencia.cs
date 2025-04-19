@@ -3,25 +3,27 @@ using Application.UseCases.CriarEquipamento;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Application.UseCases.CriarUsuario;
-using Application.UseCases.autenticacao;
 using Application.UseCases.Autenticacao;
 
 namespace Application
 {
-    // Classe estática usada para registrar todos os serviços da camada de aplicação.
-    // É comum criarmos uma classe com esse nome (InjecaoDeDependencia ou DependencyInjection)
-    // em cada camada (Application, Infra, WebAPI, etc.) para manter as responsabilidades separadas.
+    /// <summary>
+    /// Classe estática usada para registrar todos os serviços da camada de aplicação.
+    /// É comum criarmos uma classe com esse nome (InjecaoDeDependencia ou DependencyInjection)
+    /// em cada camada (Application, Infra, WebAPI, etc.) para manter as responsabilidades separadas.
+    /// </summary>
     public static class InjecaoDeDependencia
     {
-        // Método de extensão que será chamado a partir do Program.cs
-        // Ele recebe dois parâmetros:
-        //
-        // IServiceCollection services → é a lista de todos os serviços que sua aplicação conhece.
-        // IConfiguration configuration → representa o arquivo appsettings.json, variáveis de ambiente e outras configs.
-
+        /// <summary>
+        /// Método de extensão que será chamado a partir do Program.cs.
+        /// Ele recebe dois parâmetros:
+        /// - <see cref="IServiceCollection"/> services → é a lista de todos os serviços que sua aplicação conhece.
+        /// - <see cref="IConfiguration"/> configuration → representa o arquivo appsettings.json, variáveis de ambiente e outras configs.
+        /// </summary>
+        /// <param name="services">Lista de serviços que a aplicação conhece.</param>
+        /// <param name="configuration">Configurações do arquivo appsettings.json.</param>
         public static void AdicionarApplication(this IServiceCollection services, IConfiguration configuration)
         {
-
             // Registra os perfis do AutoMapper da camada Application
             AdicionarAutoMapper(services);
 
@@ -29,32 +31,34 @@ namespace Application
             AdicionarUseCases(services);
         }
 
-        // Este método adiciona o AutoMapper à injeção de dependência.
-        // O AutoMapper é uma biblioteca que facilita o mapeamento entre objetos (por exemplo, DTO → Entidade).
+        /// <summary>
+        /// Este método adiciona o AutoMapper à injeção de dependência.
+        /// O AutoMapper é uma biblioteca que facilita o mapeamento entre objetos (por exemplo, DTO → Entidade).
+        /// </summary>
+        /// <param name="services">Lista de serviços para registrar o AutoMapper.</param>
         private static void AdicionarAutoMapper(IServiceCollection services)
         {
-            // Essa forma registra automaticamente todos os perfis de mapeamento (classes que herdam de Profile)
-            // localizados no mesmo assembly (projeto) da classe InjecaoDeDependencia.
-            //
-            // Isso evita que você tenha que adicionar um por um (ex: options.AddProfile(new MeuProfile()))
+            // Registra automaticamente todos os perfis de mapeamento (classes que herdam de Profile)
+            // localizados no mesmo assembly da classe InjecaoDeDependencia.
             services.AddAutoMapper(typeof(InjecaoDeDependencia).Assembly);
         }
 
-        // Aqui registramos os casos de uso (use cases), que são as regras de negócio da aplicação.
-        // Cada use case é uma classe que executa uma ação específica (ex: criar, listar, atualizar...).
+        /// <summary>
+        /// Aqui registramos os casos de uso (use cases), que são as regras de negócio da aplicação.
+        /// Cada use case é uma classe que executa uma ação específica (ex: criar, listar, atualizar...).
+        /// </summary>
+        /// <param name="services">Lista de serviços onde os casos de uso serão registrados.</param>
         private static void AdicionarUseCases(IServiceCollection services)
         {
-           // ✅ O que significa AddScoped?
-           // - Significa que a instância da classe será criada **uma única vez por requisição HTTP**.
-           // - Durante uma mesma requisição, todos os lugares que solicitarem esse serviço (via construtor, por exemplo)
-           //   receberão **a mesma instância**.
-           // - Mas em uma nova requisição, será criada **uma nova instância**.
-           //
-           // Esse comportamento é ideal para serviços que usam DbContext, por exemplo, onde você quer manter
-           // a mesma conexão/transação durante a requisição toda.
-
-           // Exemplo: Se um controller usa ICriarUsuarioUseCase, e esse use case usa IUsuarioRepository,
-           // ambos compartilharão a mesma instância durante aquela requisição.
+            /// <summary>
+            /// O que significa AddScoped?
+            /// - Significa que a instância da classe será criada **uma única vez por requisição HTTP**.
+            /// - Durante a mesma requisição, todos os lugares que precisarem do serviço compartilharão a mesma instância.
+            /// - Em uma nova requisição, será criada uma nova instância.
+            ///
+            /// Esse comportamento é ideal para serviços que utilizam DbContext, por exemplo, onde a conexão/transação
+            /// precisa ser mantida durante toda a requisição.
+            /// </summary>
             
             services.AddScoped<ICriarEquipamentoUseCase, CriarEquipamentoUseCase>();
             services.AddScoped<ICriarUsuarioUseCase, CriarUsuarioUseCase>();

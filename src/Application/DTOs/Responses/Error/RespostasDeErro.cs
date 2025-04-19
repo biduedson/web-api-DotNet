@@ -1,22 +1,48 @@
-namespace Application.DTOs.Responses.Error;
-
-// Define uma classe que representa uma resposta de erro em formato JSON.
-public class RespostasDeErro
+namespace Application.DTOs.Responses.Error
 {
-    // Propriedade que armazena uma lista de mensagens de erro.
-    // A interface IList<string> permite que a lista seja modificável, mas mantém flexibilidade para diferentes implementações de lista.
-    public IList<string> Erros {get; set;}
-    
-    // Construtor que recebe uma lista de erros e a atribui à propriedade Errors.
-    public RespostasDeErro(IList<string> erros) => Erros = erros;
+    /// <summary>
+    /// Representa uma resposta de erro padronizada para a API.
+    /// </summary>
+    /// <remarks>
+    /// Essa classe é utilizada para encapsular mensagens de erro que podem ser retornadas para o cliente em casos de falhas de validação,
+    /// exceções tratadas, ou qualquer outra situação que demande a notificação de um ou mais erros.
+    /// </remarks>
+    public class RespostasDeErro
+    {
+        /// <summary>
+        /// Lista contendo as mensagens de erro.
+        /// </summary>
+        /// <remarks>
+        /// A propriedade é do tipo <see cref="IList{T}"/> com <see cref="string"/> como tipo genérico, permitindo múltiplas mensagens de erro.
+        /// A interface <see cref="IList{T}"/> oferece flexibilidade quanto à implementação, mantendo a possibilidade de modificação da lista.
+        /// </remarks>
+        public IList<string> Erros { get; set; }
 
-    // Construtor que recebe uma única mensagem de erro e cria uma lista contendo esse erro.
-    public RespostasDeErro(string erros)
-    {   
-        // Inicializa a propriedade Errors com uma nova lista contendo apenas o erro passado como argumento.
-        Erros = 
-        [
-            erros
-        ];
+        /// <summary>
+        /// Construtor que recebe uma lista de mensagens de erro.
+        /// </summary>
+        /// <param name="erros">Lista de strings representando mensagens de erro.</param>
+        /// <remarks>
+        /// Esse construtor é ideal para quando já se tem múltiplas mensagens de erro a serem retornadas.
+        /// </remarks>
+        public RespostasDeErro(IList<string> erros)
+        {
+            Erros = erros;
+        }
+
+        /// <summary>
+        /// Construtor que recebe uma única mensagem de erro.
+        /// </summary>
+        /// <param name="erros">Mensagem de erro única como string.</param>
+        /// <remarks>
+        /// Esse construtor facilita o retorno de erros simples ao encapsular automaticamente a mensagem em uma lista.
+        /// </remarks>
+        public RespostasDeErro(string erros)
+        {
+            Erros = 
+            [
+                erros
+            ];
+        }
     }
 }

@@ -14,7 +14,12 @@ public class ServicoDeToken : IServicoDeToken
 {
     private readonly ConfiguracaoJwt _config; // Armazena a configuração do aplicativo, como a chave do JWT.
 
-    // Construtor que injeta as configurações do app.
+    /// <summary>
+    /// Construtor que inicializa a configuração do serviço de token.
+    /// Este construtor injeta as configurações necessárias (como chave secreta, emissor, e audiência) 
+    /// a partir do arquivo de configuração ou variáveis de ambiente.
+    /// </summary>
+    /// <param name="config">Configuração das propriedades do JWT (como chave, emissor, e audiência).</param>
     public ServicoDeToken(IOptions<ConfiguracaoJwt> config)
     {
         _config = config.Value; // Inicializa a configuração com os dados do appsettings.json ou variáveis de ambiente.
@@ -22,6 +27,8 @@ public class ServicoDeToken : IServicoDeToken
 
     /// <summary>
     /// Método para gerar um token JWT.
+    /// Este método cria um token JWT contendo informações sobre o usuário, como ID, e-mail e papel (role),
+    /// e assina o token com uma chave simétrica configurada na aplicação.
     /// </summary>
     /// <param name="idUsuario">ID único do usuário (GUID).</param>
     /// <param name="email">E-mail do usuário.</param>
@@ -63,22 +70,27 @@ public class ServicoDeToken : IServicoDeToken
 
     /// <summary>
     /// Método para validar se um token JWT é válido.
+    /// Este método valida o token JWT, verificando se ele foi emitido por um emissor confiável,
+    /// se a audiência corresponde à esperada e se a assinatura do token é válida.
     /// </summary>
     /// <param name="token">Token JWT a ser validado.</param>
     /// <returns>True se o token for válido, false caso contrário.</returns>
     public void ValidarToken(string token)
     {
-        if(string.IsNullOrWhiteSpace(token))
+        
+        if(string.IsNullOrWhiteSpace(token)) // Verifica se o token é nulo ou vazio.
         {
+            // Caso o token não tenha sido fornecido, lança uma exceção.
             throw new ErroDeAutenticacaoException(MensagensDeExceptionAutenticacao.TOKEN_NAO_FORNECIDO);
         }
+  
         var tokenHandler = new JwtSecurityTokenHandler(); // Criando o manipulador para processar o token.
         
         // Recuperando a chave usada para assinar o token (do arquivo de configuração ou variáveis de ambiente).
         var chave = Encoding.UTF8.GetBytes(_config.Key);
 
-        var tokenSemBearer = token.Replace("Bearer ", "");
-
+        var tokenSemBearer = token.Replace("Bearer ", ""); // Removendo o prefixo "Bearer " caso esteja presente.
+ 
         try
         {
             // Tentando validar o token usando as configurações de validação.
@@ -86,22 +98,24 @@ public class ServicoDeToken : IServicoDeToken
             {
                 ValidateIssuer = true, // Valida o emissor do token para garantir que é de uma fonte confiável.
                 ValidateAudience = true, // Valida a audiência do token (quem deve aceitar esse token).
-                ValidAudience = _config.Issuer, // A audiência válida é a mesma configurada no appsettings ou variável de ambiente.
+                ValidAudience = _config.Audience, // A audiência válida é a mesma configurada no appsettings ou variável de ambiente.
+                ValidIssuer = _config.Issuer,    // O emissor válido é a aplicação que gerou o token, conforme o appsettings.
                 IssuerSigningKey = new SymmetricSecurityKey(chave), // A chave usada para validar a assinatura do token.
                 ValidateLifetime = true, // Verifica se o token não expirou.
                 ClockSkew = TimeSpan.Zero // Ajuste de tempo para verificação de expiração (sem margem de erro).
             }, out SecurityToken validatedToken); // O token validado é retornado aqui se for válido.
-
-            
         }
         catch
         {
-           throw new ErroDeAutenticacaoException(MensagensDeExceptionAutenticacao.TOKEN_INVALIDO); // Caso ocorra qualquer erro, o token é considerado inválido e retorna false.
+            // Caso ocorra qualquer erro durante a validação, o token é considerado inválido.
+            throw new ErroDeAutenticacaoException(MensagensDeExceptionAutenticacao.TOKEN_INVALIDO);
         }
     }
 
     /// <summary>
     /// Método para extrair o ID do usuário a partir do token JWT.
+    /// Este método tenta decodificar o token JWT e buscar o "claim" que contém o ID do usuário.
+    /// Se o token for válido, retorna o ID do usuário contido nele.
     /// </summary>
     /// <param name="token">Token JWT que contém o ID do usuário.</param>
     /// <returns>O ID do usuário se o token for válido, caso contrário retorna null.</returns>
@@ -121,20 +135,22 @@ public class ServicoDeToken : IServicoDeToken
             return id;
         }
 
-        return null; // Caso contrário, retorna null (token inválido ou sem ID).
+        // Caso não encontre o claim ou o valor não seja um GUID válido, retorna null.
+        return null;
     }
 
     /// <summary>
     /// Extrai a data de expiração de um token JWT sem validá-lo.
+    /// Este método apenas decodifica o token para acessar a data de expiração, mas não valida o token.
     /// </summary>
     /// <param name="token">Token JWT no formato compactado (JWS ou JWE).</param>
     /// <returns>Data e hora de expiração do token em UTC.</returns>
     /// <remarks>
-    /// Este método utiliza o <see cref="JwtSecurityTokenHandler.ReadJwtToken(string)"/> para decodificar o token e acessar a propriedade <see cref="JwtSecurityToken.ValidTo"/>,
+    /// Este método utiliza o <see cref="JwtSecurityTokenHandler.ReadJwtToken(string)"/> para decodificar o token e acessar a propriedade <see cref="JwtSecurityToken.ValidTo"/> 
     /// que representa a data de expiração do token. É importante notar que este método não realiza a validação do token.
     /// Para garantir a integridade e validade do token, utilize o método <see cref="JwtSecurityTokenHandler.ValidateToken(string, TokenValidationParameters, out SecurityToken)"/>.
     /// </remarks>
-   public DateTime ObterDataExpiracaoToken(string token)
+    public DateTime ObterDataExpiracaoToken(string token)
     {
         // Instancia o manipulador de tokens JWT.
         var handler = new JwtSecurityTokenHandler();
@@ -145,5 +161,4 @@ public class ServicoDeToken : IServicoDeToken
         // Retorna a data de expiração do token (campo 'exp'), em UTC.
         return jwtToken.ValidTo;
     }
-
 }

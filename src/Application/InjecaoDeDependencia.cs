@@ -25,6 +25,7 @@ namespace Application
         /// <param name="configuration">Configurações do arquivo appsettings.json.</param>
         public static void AdicionarApplication(this IServiceCollection services, IConfiguration configuration)
         {
+
             // Registra os perfis do AutoMapper da camada Application
             AdicionarAutoMapper(services);
 
@@ -60,7 +61,7 @@ namespace Application
             /// Esse comportamento é ideal para serviços que utilizam DbContext, por exemplo, onde a conexão/transação
             /// precisa ser mantida durante toda a requisição.
             /// </summary>
-            
+
             services.AddScoped<ICriarEquipamentoUseCase, CriarEquipamentoUseCase>();
             services.AddScoped<ICriarUsuarioUseCase, CriarUsuarioUseCase>();
             services.AddScoped<IAutenticacaoUseCase, AutenticacaoUseCase>();

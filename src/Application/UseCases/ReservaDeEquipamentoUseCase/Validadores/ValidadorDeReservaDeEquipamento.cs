@@ -70,8 +70,8 @@ namespace Application.UseCases.ReservaDeEquipamentoUseCase.Validadores
                 /// </summary>
                 /// <remarks>
                 /// O .Must() abaixo contém uma lógica para garantir que o valor de "Status" enviado
-                /// seja de fato um nome válido dentro do enum. O enum permite apenas valores como "Pendente", 
-                /// "Confirmada" e "Cancelada". Portanto, valores como "1", "abc" ou "QualquerOutroValor"
+                /// seja de fato um nome válido dentro do enum. O enum permite apenas valores como "Pendente", "Aprovada", "Negada", "Cancelada"  e "Devolvida". 
+                /// Portanto, valores como "1", "abc" ou "QualquerOutroValor"
                 /// serão rejeitados.
                 /// </remarks>
                 .Must(value =>
@@ -87,6 +87,7 @@ namespace Application.UseCases.ReservaDeEquipamentoUseCase.Validadores
                         .Contains(value, StringComparer.OrdinalIgnoreCase)
                 )
                 .WithMessage(MensagensDeExceptionReservaDeEquipamento.STATUS_RESERVA_INVALIDO); // Mensagem de erro se o status for inválido.
+
         }
 
     }

@@ -9,6 +9,7 @@ using Domain;
 using Domain.Exceptions;
 using Domain.Repositories.UsuarioRepository;
 
+
 namespace Application.UseCases.CriarUsuario
 {
     /// <summary>

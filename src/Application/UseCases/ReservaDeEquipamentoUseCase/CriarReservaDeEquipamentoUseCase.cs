@@ -53,6 +53,7 @@ namespace Application.UseCases.ReservaDeEquipamentoUseCase
         /// <returns>Resposta de sucesso com os dados da reserva do equipamento criada</returns>
         public async Task<RespostaDeSucessoDaApi<ReservaDeEquipamento>> Execute(ReservaDeEquipamentoRequest request)
         {
+
             // 1. Valida os dados recebidos na requisição para garantir que estão corretos antes de prosseguir.
             Validador(request);
 

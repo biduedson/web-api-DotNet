@@ -23,6 +23,8 @@ namespace API.Filtros
             // Verifica se a exceção lançada faz parte das exceções personalizadas do projeto.
             if (context.Exception is DomainException)
                 TratarExcecaoDoProjeto(context); // Trata a exceção específica do projeto.
+            else if (!context.ModelState.IsValid)
+                TratarExcecaoDeTipo(context);
             else
                 TratarExcecaoDesconhecida(context); // Trata exceções desconhecidas.
         }
@@ -73,6 +75,34 @@ namespace API.Filtros
             // Retorna um objeto de erro com uma mensagem genérica de erro desconhecido.
             context.Result = new ObjectResult(new RespostasDeErro("Erro desconhecido."));
         }
+        private void TratarExcecaoDeTipo(ExceptionContext context)
+        {
+            // Define o código de status HTTP como 500 (Internal Server Error).
+            context.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+
+            var erros = context.ModelState
+           .Where(e => e.Value!.Errors.Count > 0 && e.Key != "request")
+           .SelectMany(e => e.Value!.Errors.Select(erro => new
+           {
+               Campo = e.Key.Contains('.') ? e.Key.Split('.').Last() : e.Key,
+               TipoErro = erro.ErrorMessage.ToLower().Contains("required")
+                    ? "Campo ausente"
+                    : "Tipo inválido"
+           }))
+              .ToList();
+
+            // Retorna um objeto de erro com uma mensagem genérica com os campos que estao com erros.
+
+            context.Result = new ObjectResult(new
+            {
+                Mensagem = "Erro de validação na requisição.",
+                CamposComErro = erros
+            });
+        }
+
+
+
 
         /// <summary>
         /// Método para tratar falhas de autenticação (401 Unauthorized) geradas automaticamente pelo ASP.NET Core.

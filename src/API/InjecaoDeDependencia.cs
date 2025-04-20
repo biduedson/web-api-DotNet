@@ -1,4 +1,5 @@
 using System.Data.SqlTypes;
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 
@@ -57,6 +58,11 @@ namespace API
                     Version = "v1",
                     Description = "Documentação da API"
                 });
+
+                // Habilita comentários XML
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
                 // Configuração para suportar autenticação JWT no Swagger
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {

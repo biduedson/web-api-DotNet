@@ -9,6 +9,7 @@ namespace API.Filtros
 {
     /// <summary>
     /// Filtro global de exceções para capturar erros e retornar respostas padronizadas.
+    /// Implementa tratamento centralizado de diferentes tipos de exceções na aplicação.
     /// </summary>
     public class FiltroDeException : IExceptionFilter
     {
@@ -31,11 +32,9 @@ namespace API.Filtros
 
         /// <summary>
         /// Método responsável por lidar com exceções personalizadas do projeto.
-        /// - Verifica o tipo de exceção (ErroDeValidacaoException ou ErroDeAutenticacaoException).
-        /// - Define o código de status HTTP adequado.
-        /// - Retorna um objeto de erro com as mensagens apropriadas.
+        /// Trata especificamente exceções de validação e autenticação.
         /// </summary>
-        /// <param name="context">Contexto da exceção.</param>
+        /// <param name="context">Contexto da exceção personalizada.</param>
         private void TratarExcecaoDoProjeto(ExceptionContext context)
         {
             // Verifica se a exceção é do tipo ErroDeValidacaoException (erro de validação).
@@ -62,11 +61,10 @@ namespace API.Filtros
         }
 
         /// <summary>
-        /// Método responsável por lidar com exceções desconhecidas.
-        /// - Define o código de status HTTP como 500 (Internal Server Error).
-        /// - Retorna um objeto de erro com uma mensagem genérica de erro desconhecido.
+        /// Método responsável por lidar com exceções desconhecidas não mapeadas.
+        /// Retorna um erro genérico de servidor interno.
         /// </summary>
-        /// <param name="context">Contexto da exceção.</param>
+        /// <param name="context">Contexto da exceção desconhecida.</param>
         private void TratarExcecaoDesconhecida(ExceptionContext context)
         {
             // Define o código de status HTTP como 500 (Internal Server Error).
@@ -75,25 +73,46 @@ namespace API.Filtros
             // Retorna um objeto de erro com uma mensagem genérica de erro desconhecido.
             context.Result = new ObjectResult(new RespostasDeErro("Erro desconhecido."));
         }
+
+        /// <summary>
+        /// Método para processar erros de validação de modelo com detalhamento completo.
+        /// Extrai informações pormenorizadas sobre os campos com erro na requisição.
+        /// </summary>
         private void TratarExcecaoDeTipo(ExceptionContext context)
         {
-            // Define o código de status HTTP como 500 (Internal Server Error).
+            // Define o código de status HTTP como 400 (Bad Request) para indicar erro na requisição
             context.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-
+            /// <summary>
+            /// Processo de extração e mapeamento dos erros de validação:
+            /// 1. Filtra o ModelState para encontrar campos com erros
+            /// 2. Exclui campos com chave "request"
+            /// 3. Transforma os erros em uma coleção de objetos com informações detalhadas
+            /// </summary>
             var erros = context.ModelState
-           .Where(e => e.Value!.Errors.Count > 0 && e.Key != "request")
-           .SelectMany(e => e.Value!.Errors.Select(erro => new
-           {
-               Campo = e.Key.Contains('.') ? e.Key.Split('.').Last() : e.Key,
-               TipoErro = erro.ErrorMessage.ToLower().Contains("required")
-                    ? "Campo ausente"
-                    : "Tipo inválido"
-           }))
-              .ToList();
+                // Filtra apenas os campos que têm erros e não são "request"
+                .Where(e => e.Value!.Errors.Count > 0 && e.Key != "request")
 
-            // Retorna um objeto de erro com uma mensagem genérica com os campos que estao com erros.
+                // Transforma cada erro em um objeto com informações específicas
+                .SelectMany(e => e.Value!.Errors.Select(erro => new
+                {
+                    // Extrai o nome do campo, considerando propriedades aninhadas
+                    // Se o campo contém '.', pega apenas a última parte (ex: "Endereco.Rua" -> "Rua")
+                    Campo = e.Key.Contains('.') ? e.Key.Split('.').Last() : e.Key,
 
+                    // Classifica o tipo de erro baseado na mensagem
+                    // Se contém "required", classifica como "Campo ausente"
+                    // Caso contrário, classifica como "Tipo inválido"
+                    TipoErro = erro.ErrorMessage.ToLower().Contains("required")
+                        ? "Campo ausente"
+                        : "Tipo inválido"
+                }))
+                // Converte o resultado para uma lista
+                .ToList();
+
+            // Cria uma resposta de erro estruturada com:
+            // - Mensagem genérica de erro
+            // - Lista detalhada dos campos com erro
             context.Result = new ObjectResult(new
             {
                 Mensagem = "Erro de validação na requisição.",
@@ -101,15 +120,11 @@ namespace API.Filtros
             });
         }
 
-
-
-
         /// <summary>
         /// Método para tratar falhas de autenticação (401 Unauthorized) geradas automaticamente pelo ASP.NET Core.
-        /// - Converte a exceção para o tipo ErroDeAutenticacaoException.
-        /// - Retorna uma resposta de erro com a mensagem de acesso negado.
+        /// Converte a exceção para um formato padrão de resposta de erro.
         /// </summary>
-        /// <param name="context">Contexto da exceção.</param>
+        /// <param name="context">Contexto da exceção de autenticação.</param>
         private void TratarExcecaoDeAutenticacao(ExceptionContext context)
         {
             // Converte a exceção para o tipo ErroDeAutenticacaoException.
@@ -124,10 +139,9 @@ namespace API.Filtros
 
         /// <summary>
         /// Método para tratar falhas de autorização (403 Forbidden).
-        /// - Converte a exceção para o tipo ErroDeValidacaoException.
-        /// - Retorna uma resposta de erro com a mensagem de acesso negado.
+        /// Converte a exceção para um formato padrão de resposta de erro.
         /// </summary>
-        /// <param name="context">Contexto da exceção.</param>
+        /// <param name="context">Contexto da exceção de autorização.</param>
         private void TratarExcecaoDeForbiddenDoAspNetCore(ExceptionContext context)
         {
             // Converte a exceção para o tipo ErroDeValidacaoException.

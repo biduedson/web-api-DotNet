@@ -1,0 +1,17 @@
+{
+  "index.html": {
+    "href": "index.html",
+    "title": "This is the HOMEPAGE. | API reservas de equipamento",
+    "summary": "This is the HOMEPAGE. Refer to Markdown for how to write markdown files. Quick Start Notes: Add images to the images folder if the file is referencing an image."
+  },
+  "y/getting-started.html": {
+    "href": "y/getting-started.html",
+    "title": "Getting Started | API reservas de equipamento",
+    "summary": "Getting Started"
+  },
+  "y/introduction.html": {
+    "href": "y/introduction.html",
+    "title": "Introduction | API reservas de equipamento",
+    "summary": "Introduction"
+  }
+}

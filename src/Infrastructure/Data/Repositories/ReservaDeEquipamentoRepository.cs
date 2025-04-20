@@ -58,7 +58,7 @@ namespace Infrastructure.Data.Repositories
         /// <param name="reserva">Reserva que terá o status alterado.</param>
         /// <param name="status">Novo status da reserva.</param>
         /// <returns>Reserva atualizada com o novo status.</returns>
-        public async Task<ReservaDeEquipamento> AlterarStatusDaReserva(ReservaDeEquipamento reserva, StatusReserva status)
+        public async Task<ReservaDeEquipamento> AlterarStatusDaReserva(ReservaDeEquipamento reserva, string status)
         {
             reserva.Status = status;
             _context.ReservaDeEquipamentos.Update(reserva);

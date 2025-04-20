@@ -34,7 +34,7 @@ public interface IReservaDeEquipamentosRepository
     /// <param name="reserva">A reserva que terá o status alterado.</param>
     /// <param name="status">O novo status da reserva.</param>
     /// <returns>A reserva atualizada.</returns>
-    Task<ReservaDeEquipamento> AlterarStatusDaReserva(ReservaDeEquipamento reserva, StatusReserva status);
+    Task<ReservaDeEquipamento> AlterarStatusDaReserva(ReservaDeEquipamento reserva, string status);
 
     /// <summary>
     /// Altera a data de uma reserva existente.

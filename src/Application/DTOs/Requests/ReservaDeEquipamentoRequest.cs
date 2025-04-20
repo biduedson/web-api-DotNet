@@ -25,6 +25,6 @@ namespace Application.DTOs.Requests
         /// <summary>
         /// Status atual da reserva do equipamento.
         /// </summary>
-        public StatusReserva Status { get; set; }
+        public string Status { get; set; }  = string.Empty;
     }
 }

@@ -37,7 +37,7 @@ namespace Domain.Entities
         /// <summary>
         /// Status atual da reserva, que pode ser "Pendente", "Confirmada", "Cancelada", etc.
         /// </summary>
-        public StatusReserva Status { get; set; }
+        public string Status { get; set; } = string.Empty;
 
         /// <summary>
         /// O usuário que fez a reserva. Relacionamento com a entidade <see cref="Usuario"/>.

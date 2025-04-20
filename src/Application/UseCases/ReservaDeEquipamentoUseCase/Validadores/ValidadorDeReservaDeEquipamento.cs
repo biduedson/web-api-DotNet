@@ -1,5 +1,6 @@
 using Application.DTOs.Requests;
 using Domain;
+using Domain.Enums;
 using FluentValidation;
 
 namespace Application.UseCases.ReservaDeEquipamentoUseCase.Validadores
@@ -61,7 +62,32 @@ namespace Application.UseCases.ReservaDeEquipamentoUseCase.Validadores
             /// </remarks>
             RuleFor(reserva => reserva.Status)
                 .NotEmpty()
-                .WithMessage(MensagensDeExceptionReservaDeEquipamento.STATUS_RESERVA_OBRIGATORIA);
+                .WithMessage(MensagensDeExceptionReservaDeEquipamento.STATUS_RESERVA_OBRIGATORIA)
+
+                /// <summary>
+                /// Regra de validação personalizada para o campo 'Status':
+                /// Aqui, a validação checa se o valor enviado no campo 'Status' é válido dentro do enum StatusReserva.
+                /// </summary>
+                /// <remarks>
+                /// O .Must() abaixo contém uma lógica para garantir que o valor de "Status" enviado
+                /// seja de fato um nome válido dentro do enum. O enum permite apenas valores como "Pendente", 
+                /// "Confirmada" e "Cancelada". Portanto, valores como "1", "abc" ou "QualquerOutroValor"
+                /// serão rejeitados.
+                /// </remarks>
+                .Must(value =>
+                    // Tentando fazer o parse do valor (que pode vir como string) para um valor do enum StatusReserva.
+                    // A flag "true" indica que a comparação ignora a diferença entre maiúsculas e minúsculas.
+                    Enum.TryParse<StatusReserva>(value, true, out var parsed) &&
+
+                    // Verifica se o valor enviado existe de fato como nome válido dentro do enum StatusReserva.
+                    // Enum.GetNames(typeof(StatusReserva)) retorna todos os nomes definidos dentro do enum.
+                    // Por exemplo, para StatusReserva, retornaria ["Pendente", "Aprovada", "Negada", "Cancelada" , "Devolvida"].
+                    // O .Contains() verifica se o valor informado (como "confirmada", "PENDENTE") existe nessa lista.
+                    Enum.GetNames(typeof(StatusReserva))
+                        .Contains(value, StringComparer.OrdinalIgnoreCase)
+                )
+                .WithMessage(MensagensDeExceptionReservaDeEquipamento.STATUS_RESERVA_INVALIDO); // Mensagem de erro se o status for inválido.
         }
+
     }
 }

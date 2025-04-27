@@ -21,6 +21,7 @@ namespace Application.UseCases.CriarEquipamento.Validadores
         /// </summary>
         public ValidadorDeCriacaoDeEquipamento()
         {
+            ClassLevelCascadeMode = CascadeMode.Continue;
             /// <summary>
             /// Regra que define que o campo 'Nome' não pode ser vazio.
             /// </summary>

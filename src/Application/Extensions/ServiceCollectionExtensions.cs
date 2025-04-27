@@ -5,15 +5,16 @@ using Microsoft.Extensions.Configuration;
 using Application.UseCases.CriarUsuario;
 using Application.UseCases.Autenticacao;
 using Application.UseCases.ReservaDeEquipamentoUseCase;
+using Application.Http;
 
-namespace Application
+namespace Application.Extensions
 {
     /// <summary>
     /// Classe estática usada para registrar todos os serviços da camada de aplicação.
     /// É comum criarmos uma classe com esse nome (InjecaoDeDependencia ou DependencyInjection)
     /// em cada camada (Application, Infra, WebAPI, etc.) para manter as responsabilidades separadas.
     /// </summary>
-    public static class InjecaoDeDependencia
+    public static class ServiceCollectionExtensions
     {
         /// <summary>
         /// Método de extensão que será chamado a partir do Program.cs.
@@ -23,14 +24,17 @@ namespace Application
         /// </summary>
         /// <param name="services">Lista de serviços que a aplicação conhece.</param>
         /// <param name="configuration">Configurações do arquivo appsettings.json.</param>
-        public static void AdicionarApplication(this IServiceCollection services, IConfiguration configuration)
+        public static void AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
 
             // Registra os perfis do AutoMapper da camada Application
             AdicionarAutoMapper(services);
-
             // Registra os casos de uso da aplicação
             AdicionarUseCases(services);
+
+            AdiciRespostasDaApi(services);
+
+
         }
 
         /// <summary>
@@ -42,7 +46,7 @@ namespace Application
         {
             // Registra automaticamente todos os perfis de mapeamento (classes que herdam de Profile)
             // localizados no mesmo assembly da classe InjecaoDeDependencia.
-            services.AddAutoMapper(typeof(InjecaoDeDependencia).Assembly);
+            services.AddAutoMapper(typeof(ServiceCollectionExtensions).Assembly);
         }
 
         /// <summary>
@@ -62,6 +66,7 @@ namespace Application
             /// precisa ser mantida durante toda a requisição.
             /// </summary>
 
+            services.AddSingleton(typeof(IRespostasDaApi<>), typeof(RespostasDaApi<>));
             services.AddScoped<ICriarEquipamentoUseCase, CriarEquipamentoUseCase>();
             services.AddScoped<ICriarUsuarioUseCase, CriarUsuarioUseCase>();
             services.AddScoped<IAutenticacaoUseCase, AutenticacaoUseCase>();
@@ -70,5 +75,24 @@ namespace Application
             // services.AddScoped<IAtualizarEquipamentoUseCase, AtualizarEquipamentoUseCase>();
             // services.AddScoped<IDeletarUsuarioUseCase, DeletarUsuarioUseCase>();
         }
+        private static void AdiciRespostasDaApi(IServiceCollection services)
+        {
+            /// <summary>
+            /// O que significa AddScoped?
+            /// - Significa que a instância da classe será criada **uma única vez por requisição HTTP**.
+            /// - Durante a mesma requisição, todos os lugares que precisarem do serviço compartilharão a mesma instância.
+            /// - Em uma nova requisição, será criada uma nova instância.
+            ///
+            /// Esse comportamento é ideal para serviços que utilizam DbContext, por exemplo, onde a conexão/transação
+            /// precisa ser mantida durante toda a requisição.
+            /// </summary>
+
+            services.AddSingleton(typeof(IRespostasDaApi<>), typeof(RespostasDaApi<>));
+
+            // Adicione outros casos de uso aqui conforme necessário:
+            // services.AddScoped<IAtualizarEquipamentoUseCase, AtualizarEquipamentoUseCase>();
+            // services.AddScoped<IDeletarUsuarioUseCase, DeletarUsuarioUseCase>();
+        }
+
     }
 }

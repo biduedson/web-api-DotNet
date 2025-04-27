@@ -1,4 +1,4 @@
-namespace API.Dependencias
+namespace API.Extensions
 {
     /// <summary>
     /// Classe responsável pela configuração de políticas CORS (Cross-Origin Resource Sharing) na aplicação.

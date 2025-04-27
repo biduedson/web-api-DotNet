@@ -1,7 +1,10 @@
 using System.Net;
+using API.Filtros.Exceptions;
 using Application.DTOs.Responses.Error;
+using Application.Http;
 using Domain;
 using Domain.Exceptions;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -13,6 +16,13 @@ namespace API.Filtros
     /// </summary>
     public class FiltroDeException : IExceptionFilter
     {
+
+        private readonly IRespostasDaApi<object> _respostasDaApi;
+
+        public FiltroDeException(IRespostasDaApi<object> respostasDaApi)
+        {
+            _respostasDaApi = respostasDaApi;
+        }
         /// <summary>
         /// Método invocado automaticamente quando uma exceção ocorre durante o processamento de uma requisição.
         /// - Verifica se a exceção é uma exceção personalizada do projeto ou uma exceção desconhecida.
@@ -21,6 +31,7 @@ namespace API.Filtros
         /// <param name="context">Contexto da exceção.</param>
         public void OnException(ExceptionContext context)
         {
+
             // Verifica se a exceção lançada faz parte das exceções personalizadas do projeto.
             if (context.Exception is DomainException)
                 TratarExcecaoDoProjeto(context); // Trata a exceção específica do projeto.
@@ -89,7 +100,8 @@ namespace API.Filtros
             /// 2. Exclui campos com chave "request"
             /// 3. Transforma os erros em uma coleção de objetos com informações detalhadas
             /// </summary>
-            var erros = context.ModelState
+
+            var erro = context.ModelState
                 // Filtra apenas os campos que têm erros e não são "request"
                 .Where(e => e.Value!.Errors.Count > 0 && e.Key != "request")
 
@@ -103,12 +115,9 @@ namespace API.Filtros
                     // Classifica o tipo de erro baseado na mensagem
                     // Se contém "required", classifica como "Campo ausente"
                     // Caso contrário, classifica como "Tipo inválido"
-                    TipoErro = erro.ErrorMessage.ToLower().Contains("required")
-                        ? "Campo ausente"
-                        : "Tipo inválido"
-                }))
-                // Converte o resultado para uma lista
-                .ToList();
+                    TipoErro = "Campo com dado inválido ou ausente."
+                }));
+
 
             // Cria uma resposta de erro estruturada com:
             // - Mensagem genérica de erro
@@ -116,7 +125,7 @@ namespace API.Filtros
             context.Result = new ObjectResult(new
             {
                 Mensagem = "Erro de validação na requisição.",
-                CamposComErro = erros
+                CamposComErro = erro
             });
         }
 
@@ -153,5 +162,6 @@ namespace API.Filtros
             // Retorna um objeto de erro contendo a mensagem de acesso negado.
             context.Result = new ObjectResult(new RespostasDeErro(MensagensDeExceptionAutenticacao.ACESSO_NEGADO));
         }
+
     }
 }

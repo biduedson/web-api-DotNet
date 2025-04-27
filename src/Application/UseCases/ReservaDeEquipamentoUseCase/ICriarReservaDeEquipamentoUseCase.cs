@@ -16,10 +16,5 @@ namespace Application.UseCases.ReservaDeEquipamentoUseCase
         /// <returns>Retorna um objeto de sucesso da API com os dados da reserva de equipamento criada.</returns>
         Task<RespostaDeSucessoDaApi<ReservaDeEquipamento>> Execute(ReservaDeEquipamentoRequest request);
 
-        /// <summary>
-        /// Método responsável por validar um token.
-        /// </summary>
-        /// <param name="token">Token a ser validado.</param>
-        void ValidarToken(string token);
     }
 }

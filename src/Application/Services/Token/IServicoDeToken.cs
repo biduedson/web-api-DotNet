@@ -14,17 +14,6 @@ namespace Application.Services.Token
         /// <returns>Token JWT gerado.</returns>
         string GerarToken(Guid idUsuario, string email, bool administrador);
 
-        /// <summary>
-        /// Método responsável por validar um token JWT.
-        /// </summary>
-        /// <param name="token">Token JWT a ser validado.</param>
-        void ValidarToken(string token);
-
-        /// <summary>
-        /// Método responsável por obter o ID do usuário a partir do token JWT.
-        /// </summary>
-        /// <param name="token">Token JWT.</param>
-        /// <returns>O ID do usuário, caso o token seja válido, ou null se inválido.</returns>
         Guid? ObterIdDoUsuarioDoToken(string token);
 
         /// <summary>
@@ -33,5 +22,12 @@ namespace Application.Services.Token
         /// <param name="token">Token JWT.</param>
         /// <returns>A data de expiração do token.</returns>
         DateTime ObterDataExpiracaoToken(string token);
+
+        /// <summary>
+        /// Método responsável por obter o tipo de usuario (se e usuario comum ou admistrador.).
+        /// </summary>
+        /// <param name="token">Token JWT.</param>
+        /// <returns>A data de expiração do token.</returns>
+        string ObterTipoDeUsuario(string token);
     }
 }

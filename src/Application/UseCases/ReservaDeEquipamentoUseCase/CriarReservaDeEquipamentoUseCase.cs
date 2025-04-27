@@ -98,9 +98,6 @@ namespace Application.UseCases.ReservaDeEquipamentoUseCase
         /// Valida o token recebido na requisição utilizando o serviço apropriado.
         /// </summary>
         /// <param name="token">Token JWT enviado pelo cliente</param>
-        public void ValidarToken(string token)
-        {
-            _servicoDeToken.ValidarToken(token);
-        }
+
     }
 }

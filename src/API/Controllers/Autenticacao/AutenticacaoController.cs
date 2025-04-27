@@ -1,5 +1,6 @@
 using Application.DTOs.Requests;
 using Application.DTOs.Responses;
+using Application.Http;
 using Application.Shared;
 using Application.UseCases.Autenticacao;
 using Microsoft.AspNetCore.Mvc;
@@ -52,7 +53,7 @@ public class AutenticacaoController : ControllerBase
     /// incluindo token de acesso e data de expiração.
     /// </returns>
     [HttpPost("autenticar")]
-    [ProducesResponseType(typeof(RespostaDeSucessoDaApi<UsuarioAutenticado>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(RespostasDaApi<UsuarioAutenticado>), StatusCodes.Status200OK)]
     public async Task<IActionResult> Autenticar([FromBody] AutenticacaoRequest request)
     {
         var usuarioAutenticado = await _autenticacaoUseCase.Execute(request);

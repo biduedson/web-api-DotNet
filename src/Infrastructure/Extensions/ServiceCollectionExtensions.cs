@@ -1,4 +1,5 @@
 // Importa o contexto do banco de dados (AppDbContext), que representa as entidades e as tabelas do banco
+
 using Application.Services.Criptografia;
 using Application.Services.Token;
 using Domain.Repositories.EquipamentoRepository;
@@ -6,6 +7,7 @@ using Domain.Repositories.ReservaDeEquipamentosRepository;
 using Domain.Repositories.UsuarioRepository;
 using Infrastructure.Data.Context;
 using Infrastructure.Data.Repositories;
+using Infrastructure.Seguranca;
 using Infrastructure.Services.Auth;
 using Infrastructure.Services.Criptografia;
 
@@ -18,11 +20,11 @@ using Microsoft.Extensions.Configuration;
 // Importa a interface IServiceCollection, que permite registrar serviços na injeção de dependência
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Infrastructure
+namespace Infrastructure.Extensions
 {
     // Define uma classe estática chamada InjecaoDeDependencia.
     // Ela serve para organizar as configurações da camada de infraestrutura, como acesso a banco de dados.
-    public static class InjecaoDeDependencia
+    public static class ServiceCollectionExtensions
     {
         /// <summary>
         /// Este método é uma extensão da IServiceCollection.
@@ -30,7 +32,7 @@ namespace Infrastructure
         /// </summary>
         /// <param name="services">É a coleção de serviços da aplicação, usada para registrar dependências.</param>
         /// <param name="configuration">É o objeto que carrega as configurações da aplicação (como appsettings.json).</param>
-        public static void AdicionarInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             /*
             ❓ O que é `this IServiceCollection services`?
@@ -62,10 +64,11 @@ namespace Infrastructure
             {
                 dbContextOptions.UseMySql(connectionString, serverVersion);
             });
-
-            // Bind do bloco "Jwt" para ConfiguracoesJwt
             var jwtSection = configuration.GetSection("Jwt");
             services.Configure<ConfiguracaoJwt>(jwtSection);
+            AddAutenticacaoJwt.Configurar(services, configuration);
+            // Bind do bloco "Jwt" para ConfiguracoesJwt
+
 
             // Registro dos repositórios seguindo o padrão de abstração via interfaces
             // ✅ AddScoped: Uma instância será criada por requisição HTTP (ideal para uso com DbContext)
@@ -76,8 +79,12 @@ namespace Infrastructure
             // Registro do serviço de token com tempo de vida Singleton
             services.AddSingleton<IServicoDeToken, ServicoDeToken>();
 
+
+
+
             // Chamada do método que registra o serviço de criptografia
             AdicionarCriptografiaDesenha(services, configuration);
+
         }
 
         /// <summary>
@@ -98,7 +105,7 @@ namespace Infrastructure
                 // Obtém a chave adicional de criptografia das configurações
                 var AdditionalKey = configuration.GetValue<string>("Settings:Passwords:AdditionalKey");
                 // Retorna uma nova instância da implementação com os parâmetros necessários
-                 return new CriptografiaDeSenha(configuration, AdditionalKey!);
+                return new CriptografiaDeSenha(configuration, AdditionalKey!);
             });
         }
     }

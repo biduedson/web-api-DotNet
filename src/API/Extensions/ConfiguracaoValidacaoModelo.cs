@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Dependencias
+
+namespace API.Extensions
 {
     public static class ConfiguracaoValidacaoModelo
     {
@@ -15,7 +16,9 @@ namespace API.Dependencias
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
+
             });
+
         }
     }
 }

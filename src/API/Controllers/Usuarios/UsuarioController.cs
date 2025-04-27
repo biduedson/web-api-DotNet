@@ -1,5 +1,6 @@
 using Application.DTOs.Requests;
 using Application.DTOs.Responses;
+using Application.Http;
 using Application.UseCases.CriarUsuario;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,7 +43,7 @@ namespace API.Controllers
         /// mas como não estamos retornando a URL aqui, passamos string.Empty.
         /// </returns>
         [HttpPost]
-        [ProducesResponseType(typeof(RespostaDeSucessoDaApi<Object>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(RespostasDaApi<Object>), StatusCodes.Status201Created)]
         public async Task<IActionResult> Post(
             [FromServices] ICriarUsuarioUseCase useCase,
             [FromBody] RegistrarUsuarioRequest request)

@@ -5,6 +5,7 @@
 using Application.DTOs;
 using Application.DTOs.Requests; // DTO de entrada (request)
 using Application.DTOs.Responses;
+using Application.Http;
 using Application.Services.Token; // Serviço para validação de token
 using Application.UseCases.CriarEquipamento.Validadores; // Classe de validação da request
 using AutoMapper; // Biblioteca AutoMapper para mapear objetos
@@ -36,6 +37,8 @@ namespace Application.UseCases.CriarEquipamento
         /// </summary>
         private readonly IServicoDeToken _servicoDeToken;
 
+        private readonly IRespostasDaApi<object> _respostasDaApi;
+
         /// <summary>
         /// Construtor responsável por injetar as dependências necessárias.
         /// - Repositório de equipamentos
@@ -45,8 +48,9 @@ namespace Application.UseCases.CriarEquipamento
         /// <param name="repository">Repositório de equipamentos</param>
         /// <param name="mapper">Instância do AutoMapper</param>
         /// <param name="servicoDeToken">Serviço para validação de token</param>
-        public CriarEquipamentoUseCase(IEquipamentoRepository repository, IMapper mapper, IServicoDeToken servicoDeToken)
+        public CriarEquipamentoUseCase(IEquipamentoRepository repository, IMapper mapper, IServicoDeToken servicoDeToken, IRespostasDaApi<object> respostasDaApi)
         {
+            _respostasDaApi = respostasDaApi;
             _repository = repository;
             _mapper = mapper;
             _servicoDeToken = servicoDeToken;
@@ -61,11 +65,11 @@ namespace Application.UseCases.CriarEquipamento
         /// </summary>
         /// <param name="request">Objeto contendo os dados enviados na requisição</param>
         /// <returns>Resposta de sucesso com os dados do equipamento criado</returns>
-        public async Task<RespostaDeSucessoDaApi<object>> Execute(RegistraEquipamentoRequest request)
+        public async Task<IRespostasDaApi<Object>> Execute(RegistraEquipamentoRequest request)
         {
             // 1. Valida os dados recebidos na requisição para garantir que estão corretos antes de prosseguir.   
             Validador(request);
- 
+
             // 2. Mapeia os dados do request para a entidade de domínio Equipamento.
             var equipamento = _mapper.Map<Equipamento>(request);
 
@@ -73,12 +77,11 @@ namespace Application.UseCases.CriarEquipamento
             await _repository.AdicionarEquipamentoAsync(equipamento);
 
             // 4. Retorna uma resposta de sucesso com as informações do equipamento.
-            return new RespostaDeSucessoDaApi<object>
-            {
-                Succes = true,
-                Message = "Equipamento cadastrado com sucesso",
-                Data = new { Nome = request.Nome }
-            };
+            return _respostasDaApi.Ok(
+            Data: new { Nome = request.Nome },
+            Message: "Equipamento cadastrado com sucesso"
+           );
+
         }
 
         /// <summary>
@@ -104,14 +107,5 @@ namespace Application.UseCases.CriarEquipamento
             }
         }
 
-        /// <summary>
-        /// Valida o token recebido na requisição utilizando o serviço apropriado.
-        /// - Garante que o token JWT seja válido antes de permitir a execução da operação.
-        /// </summary>
-        /// <param name="token">Token JWT enviado pelo cliente</param>
-        public void ValidarToken(string token)
-        {
-            _servicoDeToken.ValidarToken(token);
-        }
     }
 }

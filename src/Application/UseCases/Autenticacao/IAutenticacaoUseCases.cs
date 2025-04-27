@@ -1,5 +1,6 @@
 using Application.DTOs.Requests;
 using Application.DTOs.Responses;
+using Application.Http;
 using Application.Shared;
 
 namespace Application.UseCases.Autenticacao
@@ -14,6 +15,6 @@ namespace Application.UseCases.Autenticacao
         /// </summary>
         /// <param name="request">Objeto que contém os dados de autenticação, como email e senha.</param>
         /// <returns>Retorna um objeto de sucesso da API contendo os dados do usuário autenticado.</returns>
-        Task<RespostaDeSucessoDaApi<UsuarioAutenticado>> Execute(AutenticacaoRequest request);
+        Task<IRespostasDaApi<UsuarioAutenticado>> Execute(AutenticacaoRequest request);
     }
 }

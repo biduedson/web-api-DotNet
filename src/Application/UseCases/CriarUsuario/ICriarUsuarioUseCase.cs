@@ -1,5 +1,6 @@
 using Application.DTOs.Requests;
 using Application.DTOs.Responses;
+using Application.Http;
 
 namespace Application.UseCases.CriarUsuario;
 
@@ -20,5 +21,5 @@ public interface ICriarUsuarioUseCase
     /// Um objeto do tipo <see cref="RespostaDeSucessoDaApi{Object}"/>, contendo informações sobre o sucesso da operação
     /// e os dados retornados, caso aplicável.
     /// </returns>
-    Task<RespostaDeSucessoDaApi<Object>> Execute(RegistrarUsuarioRequest request);
+    Task<IRespostasDaApi<Object>> Execute(RegistrarUsuarioRequest request);
 }

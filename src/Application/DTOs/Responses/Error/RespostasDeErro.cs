@@ -37,11 +37,11 @@ namespace Application.DTOs.Responses.Error
         /// <remarks>
         /// Esse construtor facilita o retorno de erros simples ao encapsular automaticamente a mensagem em uma lista.
         /// </remarks>
-        public RespostasDeErro(string erros)
+        public RespostasDeErro(string erro)
         {
-            Erros = 
+            Erros =
             [
-                erros
+                erro
             ];
         }
     }

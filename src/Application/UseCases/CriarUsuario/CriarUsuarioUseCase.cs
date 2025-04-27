@@ -1,6 +1,7 @@
 using System.Security.Cryptography.X509Certificates;
 using Application.DTOs.Requests;
 using Application.DTOs.Responses;
+using Application.Http;
 using Application.Services.Criptografia;
 using Application.Services.Token;
 using Application.UseCases.CriarUsuario.Validadores;
@@ -39,6 +40,8 @@ namespace Application.UseCases.CriarUsuario
         /// </summary>
         private readonly IServicoDeToken _servicoDetoken;
 
+        private readonly IRespostasDaApi<object> _respostasDaApi;
+
         /// <summary>
         /// Construtor da classe, recebe via injeção de dependência:
         /// - o repositório que lida com persistência de dados
@@ -46,12 +49,18 @@ namespace Application.UseCases.CriarUsuario
         /// - o serviço de criptografia para senhas
         /// - o serviço de tokens
         /// </summary>
-        public CriarUsuarioUseCase(IUsuarioRepository repository, IMapper mapper, ICriptografiaDeSenha criptografiaDeSenha, IServicoDeToken servicoDetoken)
+        public CriarUsuarioUseCase(
+        IUsuarioRepository repository,
+        IMapper mapper,
+        ICriptografiaDeSenha criptografiaDeSenha,
+        IServicoDeToken servicoDetoken,
+        IRespostasDaApi<object> respostasDaApi)
         {
             _repository = repository;
             _mapper = mapper;
             _criptografiaDeSenha = criptografiaDeSenha;
             _servicoDetoken = servicoDetoken;
+            _respostasDaApi = respostasDaApi;
         }
 
         /// <summary>
@@ -63,7 +72,7 @@ namespace Application.UseCases.CriarUsuario
         /// </summary>
         /// <param name="request">Objeto contendo os dados enviados pela requisição para a criação do usuário</param>
         /// <returns>Resposta de sucesso com os dados principais do usuário criado</returns>
-        public async Task<RespostaDeSucessoDaApi<Object>> Execute(RegistrarUsuarioRequest request)
+        public async Task<IRespostasDaApi<Object>> Execute(RegistrarUsuarioRequest request)
         {
             // 1. Valida os dados recebidos na requisição para garantir que estão corretos antes de prosseguir.
             await Validador(request);
@@ -78,9 +87,8 @@ namespace Application.UseCases.CriarUsuario
             await _repository.AdicionarAsync(usuario);
 
             // 5. Retorna uma resposta indicando sucesso com os dados principais.
-            return new RespostaDeSucessoDaApi<object>
+            return new RespostasDaApi<object>
             {
-                Succes = true,
                 Message = "Usuário cadastrado com sucesso",
                 Data = new { Nome = request.Nome }
             };

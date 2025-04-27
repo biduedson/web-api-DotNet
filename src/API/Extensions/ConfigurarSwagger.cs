@@ -1,7 +1,7 @@
 using System.Reflection;
 using Microsoft.OpenApi.Models;
 
-namespace API.Dependencias
+namespace API.Extensions
 {
     public static class ConfigurarSwagger
     {

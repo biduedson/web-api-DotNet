@@ -37,7 +37,7 @@ public class ServicoDeToken : IServicoDeToken
     public string GerarToken(Guid idUsuario, string email, bool administrador)
     {
         // Definindo os "claims" (declarações) do token. Claims são informações sobre o usuário.
-        var claims = new[] 
+        var claims = new[]
         {
             // Claim "sub" (Subject): Identificador único do usuário (ID).
             new Claim(JwtRegisteredClaimNames.Sub, idUsuario.ToString()),
@@ -68,49 +68,6 @@ public class ServicoDeToken : IServicoDeToken
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    /// <summary>
-    /// Método para validar se um token JWT é válido.
-    /// Este método valida o token JWT, verificando se ele foi emitido por um emissor confiável,
-    /// se a audiência corresponde à esperada e se a assinatura do token é válida.
-    /// </summary>
-    /// <param name="token">Token JWT a ser validado.</param>
-    /// <returns>True se o token for válido, false caso contrário.</returns>
-    public void ValidarToken(string token)
-    {
-        
-        if(string.IsNullOrWhiteSpace(token)) // Verifica se o token é nulo ou vazio.
-        {
-            // Caso o token não tenha sido fornecido, lança uma exceção.
-            throw new ErroDeAutenticacaoException(MensagensDeExceptionAutenticacao.TOKEN_NAO_FORNECIDO);
-        }
-  
-        var tokenHandler = new JwtSecurityTokenHandler(); // Criando o manipulador para processar o token.
-        
-        // Recuperando a chave usada para assinar o token (do arquivo de configuração ou variáveis de ambiente).
-        var chave = Encoding.UTF8.GetBytes(_config.Key);
-
-        var tokenSemBearer = token.Replace("Bearer ", ""); // Removendo o prefixo "Bearer " caso esteja presente.
- 
-        try
-        {
-            // Tentando validar o token usando as configurações de validação.
-            tokenHandler.ValidateToken(tokenSemBearer, new TokenValidationParameters
-            {
-                ValidateIssuer = true, // Valida o emissor do token para garantir que é de uma fonte confiável.
-                ValidateAudience = true, // Valida a audiência do token (quem deve aceitar esse token).
-                ValidAudience = _config.Audience, // A audiência válida é a mesma configurada no appsettings ou variável de ambiente.
-                ValidIssuer = _config.Issuer,    // O emissor válido é a aplicação que gerou o token, conforme o appsettings.
-                IssuerSigningKey = new SymmetricSecurityKey(chave), // A chave usada para validar a assinatura do token.
-                ValidateLifetime = true, // Verifica se o token não expirou.
-                ClockSkew = TimeSpan.Zero // Ajuste de tempo para verificação de expiração (sem margem de erro).
-            }, out SecurityToken validatedToken); // O token validado é retornado aqui se for válido.
-        }
-        catch
-        {
-            // Caso ocorra qualquer erro durante a validação, o token é considerado inválido.
-            throw new ErroDeAutenticacaoException(MensagensDeExceptionAutenticacao.TOKEN_INVALIDO);
-        }
-    }
 
     /// <summary>
     /// Método para extrair o ID do usuário a partir do token JWT.
@@ -157,8 +114,22 @@ public class ServicoDeToken : IServicoDeToken
 
         // Lê o token JWT sem validá-lo.
         var jwtToken = handler.ReadJwtToken(token);
-   
+
         // Retorna a data de expiração do token (campo 'exp'), em UTC.
         return jwtToken.ValidTo;
+    }
+
+    /// <summary>
+    /// Método responsável por obter o tipo de usuario (se e usuario comum ou admistrador.).
+    /// </summary>
+    /// <param name="token">Token JWT.</param>
+    /// <returns>A data de expiração do token.</returns>
+    public string ObterTipoDeUsuario(string token)
+    {
+        var handler = new JwtSecurityTokenHandler();
+
+        var jwtToken = handler.ReadJwtToken(token);
+
+        return jwtToken.Claims.FirstOrDefault(usuario => usuario.Type == "role")?.Value!;
     }
 }

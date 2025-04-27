@@ -1,5 +1,6 @@
 using Application.DTOs.Requests;
 using Application.DTOs.Responses;
+using Application.Http;
 
 namespace Application.UseCases.CriarEquipamento
 {
@@ -13,12 +14,7 @@ namespace Application.UseCases.CriarEquipamento
         /// </summary>
         /// <param name="request">Objeto que contém os dados necessários para a criação de um equipamento.</param>
         /// <returns>Retorna um objeto de sucesso da API com os dados do equipamento criado.</returns>
-        Task<RespostaDeSucessoDaApi<Object>> Execute(RegistraEquipamentoRequest request);
+        Task<IRespostasDaApi<Object>> Execute(RegistraEquipamentoRequest request);
 
-        /// <summary>
-        /// Método responsável por validar um token.
-        /// </summary>
-        /// <param name="token">Token a ser validado.</param>
-        void ValidarToken(string token);
     }
 }

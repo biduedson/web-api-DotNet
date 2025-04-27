@@ -1,8 +1,10 @@
 using DotNetEnv;
-using Application;
 using API.Filtros;
-using Infrastructure;
-using API;
+using Infrastructure.Extensions;
+using Infrastructure.Seguranca;
+using API.Extensions;
+using FluentValidation;
+using Application.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,13 +15,15 @@ builder.Configuration.AddEnvironmentVariables();
 
 // Adiciona o arquivo appsettings.json (se necessário)
 builder.Configuration.AddJsonFile("appsettings.Development", optional: true, reloadOnChange: true);
+ValidatorOptions.Global.DefaultClassLevelCascadeMode = CascadeMode.Continue;
 
-builder.Services.AdicionarApplication(builder.Configuration);
-builder.Services.AdicionarInfrastructure(builder.Configuration);
-builder.Services.AdicionarServicosDaAPI(builder.Configuration);
+builder.Services.AddApplication(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddAPI(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
 
 // Adiciona filtro de exceção
 builder.Services.AddMvc(options => options.Filters.Add(typeof(FiltroDeException)));

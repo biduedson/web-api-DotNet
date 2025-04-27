@@ -6,16 +6,18 @@ using Domain.Exceptions;
 using Application.Services.Token;
 using Domain;
 using Application.Services.Criptografia;
-using Application.DTOs.Responses;
+using Application.Http;
 
 namespace Application.UseCases.Autenticacao
 {
     public class AutenticacaoUseCase : IAutenticacaoUseCase
     {
         private readonly IUsuarioRepository _repository;
-        private readonly IMapper _mapper;   
+        private readonly IMapper _mapper;
         private readonly IServicoDeToken _servicoDeToken;
         private readonly ICriptografiaDeSenha _criptoGrafiaDeSenha;
+
+        private readonly IRespostasDaApi<UsuarioAutenticado> _respostasDaApi;
 
         /// <summary>
         /// Inicializa a classe com as dependências necessárias para autenticação de usuários.
@@ -24,12 +26,19 @@ namespace Application.UseCases.Autenticacao
         /// <param name="mapper">Objeto para mapear entidades para DTOs.</param>
         /// <param name="servicoDeToken">Serviço para geração de tokens de autenticação.</param>
         /// <param name="criptoGrafiaDeSenha">Serviço para criptografar senhas de usuários.</param>
-        public AutenticacaoUseCase(IUsuarioRepository repository, IMapper mapper, IServicoDeToken servicoDeToken, ICriptografiaDeSenha criptoGrafiaDeSenha)
+        public AutenticacaoUseCase(
+            IUsuarioRepository repository,
+            IMapper mapper,
+            IServicoDeToken servicoDeToken,
+            ICriptografiaDeSenha criptoGrafiaDeSenha,
+            IRespostasDaApi<UsuarioAutenticado> respostasDaApi
+            )
         {
             _repository = repository;
             _mapper = mapper;
             _servicoDeToken = servicoDeToken;
             _criptoGrafiaDeSenha = criptoGrafiaDeSenha;
+            _respostasDaApi = respostasDaApi;
         }
 
         /// <summary>
@@ -40,16 +49,13 @@ namespace Application.UseCases.Autenticacao
         /// </summary>
         /// <param name="request">Objeto contendo o e-mail e a senha fornecidos pelo usuário.</param>
         /// <returns>Resposta de sucesso contendo os dados do usuário autenticado e o token gerado.</returns>
-        public async Task<RespostaDeSucessoDaApi<UsuarioAutenticado>> Execute(AutenticacaoRequest request)
+        public async Task<IRespostasDaApi<UsuarioAutenticado>> Execute(AutenticacaoRequest request)
         {
             var usuarioLogado = await Autenticar(request);
 
-            return new RespostaDeSucessoDaApi<UsuarioAutenticado>
-            {
-                Succes = true,
-                Message = "Usuario logado com sucesso.",
-                Data = usuarioLogado
-            };
+            return _respostasDaApi.Ok(usuarioLogado, "Usuario logado com sucesso.");
+
+
         }
 
         /// <summary>
@@ -62,6 +68,7 @@ namespace Application.UseCases.Autenticacao
         /// <returns>Dados do usuário autenticado, incluindo o token gerado e a data de expiração.</returns>
         private async Task<UsuarioAutenticado> Autenticar(AutenticacaoRequest request)
         {
+
             var senhaCriptografada = _criptoGrafiaDeSenha.CriptografarSenha(request.Senha);
             var usuario = await _repository.ObterPorEmail(request.Email);
 
